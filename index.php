@@ -104,8 +104,8 @@ if (isset($_SESSION['user_id'])) {
                 <div class="col-md-4">
                     <div class="card adhub-card h-100 p-4 text-center">
                         <div class="mb-3 service-icon"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16"><path d="M10.478 1.647a.5.5 0 1 0-.956-.294l-4 13a.5.5 0 0 0 .956.294l4-13zM4.854 4.146a.5.5 0 0 1 0 .708L1.707 8l3.147 3.146a.5.5 0 0 1-.708.708l-3.5-3.5a.5.5 0 0 1 0-.708l3.5-3.5a.5.5 0 0 1 .708 0zm6.292 0a.5.5 0 0 0 0 .708L14.293 8l-3.147 3.146a.5.5 0 0 0 .708.708l3.5-3.5a.5.5 0 0 0 0-.708l-3.5-3.5a.5.5 0 0 0-.708 0z"/></svg></div>
-                        <h4 class="fw-bold fs-5 text-white">Web Development</h4>
-                        <p class="text-white small">Custom landing pages and business sites built with modern tech.</p>
+                        <h4 class="fw-bold fs-5 text-white">Slogan</h4>
+                        <p class="text-white small">Eye-catching phrase to help people recognize your brand</p>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -123,7 +123,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="container py-5 text-center">
             <h2 class="fw-bold text-white mb-5">How It Works</h2>
             <div class="row g-5">
-                <div class="col-md-4"><div class="display-4 fw-bold text-white opacity-25 mb-3">01</div><h5 class="text-white">Subscribe</h5><p class="text-white-75">Pick a plan and get instant access to your portal.</p></div>
+                <div class="col-md-4"><div class="display-4 fw-bold text-white opacity-25 mb-3">01</div><h5 class="text-white">Login</h5><p class="text-white-75">Create account to instantly access your dashboard</p></div>
                 <div class="col-md-4"><div class="display-4 fw-bold text-white opacity-25 mb-3">02</div><h5 class="text-white">Request</h5><p class="text-white-75">Submit as many design or dev tasks as you need.</p></div>
                 <div class="col-md-4"><div class="display-4 fw-bold text-white opacity-25 mb-3">03</div><h5 class="text-white">Receive</h5><p class="text-white-75">Get high-quality deliverables in just a few days.</p></div>
             </div>

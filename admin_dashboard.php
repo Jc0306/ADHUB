@@ -7,9 +7,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// ---------------------------------------------------------------
-// POST HANDLERS
-// ---------------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Upload deliverable file
@@ -23,13 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $upload_dir = 'uploads/deliverables/';
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
             $ext       = strtolower(pathinfo($_FILES['deliverable_file']['name'], PATHINFO_EXTENSION));
-            // Whitelist allowed file types
+            //allowed file types
             $allowed_ext   = ['jpg','jpeg','png','gif','webp','pdf','zip','mp4'];
             $allowed_mimes = ['image/jpeg','image/png','image/gif','image/webp','application/pdf','application/zip','video/mp4'];
             $finfo         = finfo_open(FILEINFO_MIME_TYPE);
             $mime          = finfo_file($finfo, $_FILES['deliverable_file']['tmp_name']);
             finfo_close($finfo);
-            // Max 20 MB
+            // Max size
             $max_size = 20 * 1024 * 1024;
             if (!in_array($ext, $allowed_ext) || !in_array($mime, $allowed_mimes) || $_FILES['deliverable_file']['size'] > $max_size) {
                 header("Location: admin_dashboard.php?msg=invalid_file&open=$pid"); exit();
@@ -77,36 +74,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ---------------------------------------------------------------
-// FILTERS
-// ---------------------------------------------------------------
-$where_clauses   = [];
-$search          = "";
-$priority_filter = "";
+$where_clauses = [];
+$search        = "";
+$status_filter = "";
 
 if (isset($_GET['filter_btn'])) {
     if (!empty($_GET['search'])) {
         $search          = mysqli_real_escape_string($conn, $_GET['search']);
         $where_clauses[] = "(u.full_name LIKE '%$search%' OR p.title LIKE '%$search%')";
     }
-    if (!empty($_GET['priority']) && $_GET['priority'] !== 'All') {
-        $priority_filter = mysqli_real_escape_string($conn, $_GET['priority']);
-        $where_clauses[] = "p.priority = '$priority_filter'";
+    if (!empty($_GET['status']) && $_GET['status'] !== 'All') {
+        $status_filter   = mysqli_real_escape_string($conn, $_GET['status']);
+        $where_clauses[] = "p.status = '$status_filter'";
     }
 }
 $where_sql = count($where_clauses) ? " WHERE " . implode(" AND ", $where_clauses) : "";
 
-// ---------------------------------------------------------------
 // GLOBAL STATS
-// ---------------------------------------------------------------
 $pending_count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FROM tbl_projects WHERE status='pending'"))['t'] ?? 0;
-$urgent_count  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FROM tbl_projects WHERE priority='High'"))['t'] ?? 0;
 $revenue       = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COALESCE(SUM(amount_paid),0) as t FROM tbl_invoices"))['t'] ?? 0;
 $client_count  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(DISTINCT id) as t FROM tbl_users WHERE role='client'"))['t'] ?? 0;
 
-// ---------------------------------------------------------------
-// CHART DATA — project count per month, last 6 months
-// ---------------------------------------------------------------
+// CHART DATA — project count per month
 $chart_labels = [];
 $chart_data   = [];
 for ($i = 5; $i >= 0; $i--) {
@@ -117,9 +106,7 @@ for ($i = 5; $i >= 0; $i--) {
     $chart_data[]   = (int)($cq['t'] ?? 0);
 }
 
-// ---------------------------------------------------------------
-// FETCH ALL PROJECTS for table + modals (one query, stored in array)
-// ---------------------------------------------------------------
+// FETCH ALL PROJECTS for table + modals
 $query    = "SELECT p.*, u.full_name, u.email FROM tbl_projects p JOIN tbl_users u ON p.client_id = u.id $where_sql ORDER BY p.created_at DESC";
 $result   = mysqli_query($conn, $query);
 $projects = [];
@@ -221,12 +208,7 @@ while ($r = mysqli_fetch_assoc($result)) {
                         <h3 class="fw-bold mb-0"><?php echo $pending_count; ?></h3>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card p-3 border-danger">
-                        <small class="text-danger fw-bold text-uppercase">Urgent</small>
-                        <h3 class="fw-bold mb-0"><?php echo $urgent_count; ?></h3>
-                    </div>
-                </div>
+                
                 <div class="col-md-3">
                     <div class="card p-3 border-success">
                         <small class="text-success fw-bold text-uppercase">Revenue Collected</small>
@@ -256,10 +238,12 @@ while ($r = mysqli_fetch_assoc($result)) {
                 <h2 class="fw-bold mb-0">Project Management</h2>
                 <form action="admin_dashboard.php" method="GET" class="d-flex gap-2 flex-wrap">
                     <input type="text" name="search" class="form-control form-control-sm" placeholder="Search client or title..." style="width:240px;" value="<?php echo htmlspecialchars($search); ?>">
-                    <select name="priority" class="form-select form-select-sm" style="width:140px;">
-                        <option value="All">All Priority</option>
-                        <option value="High" <?php echo ($priority_filter === 'High') ? 'selected' : ''; ?>>High</option>
-                        <option value="Low"  <?php echo ($priority_filter === 'Low')  ? 'selected' : ''; ?>>Low</option>
+                    <select name="status" class="form-select form-select-sm" style="width:140px;">
+                        <option value="All">All Status</option>
+                        <option value="pending"     <?php echo ($status_filter === 'pending')     ? 'selected' : ''; ?>>Pending</option>
+                        <option value="in-progress" <?php echo ($status_filter === 'in-progress') ? 'selected' : ''; ?>>In Progress</option>
+                        <option value="revision"    <?php echo ($status_filter === 'revision')    ? 'selected' : ''; ?>>Revision</option>
+                        <option value="completed"   <?php echo ($status_filter === 'completed')   ? 'selected' : ''; ?>>Completed</option>
                     </select>
                     <button type="submit" name="filter_btn" class="btn btn-adhub btn-sm px-3">Filter</button>
                     <?php if (isset($_GET['filter_btn'])): ?>
@@ -277,7 +261,6 @@ while ($r = mysqli_fetch_assoc($result)) {
                                 <tr>
                                     <th class="ps-4 py-3">Client</th>
                                     <th class="py-3">Project</th>
-                                    <th class="py-3 text-center">Priority</th>
                                     <th class="py-3">Budget</th>
                                     <th class="py-3">Status</th>
                                     <th class="text-end pe-4 py-3">Action</th>
@@ -301,11 +284,6 @@ while ($r = mysqli_fetch_assoc($result)) {
                                         <div class="small text-white-50"><?php echo htmlspecialchars($row['email']); ?></div>
                                     </td>
                                     <td class="fw-bold text-white"><?php echo htmlspecialchars($row['title']); ?></td>
-                                    <td class="text-center">
-                                        <span class="badge bg-<?php echo ($row['priority'] === 'High') ? 'danger' : 'info'; ?>">
-                                            <?php echo strtoupper($row['priority']); ?>
-                                        </span>
-                                    </td>
                                     <td class="fw-bold text-white">$<?php echo number_format($row['budget'], 2); ?></td>
                                     <td><span class="status-badge <?php echo $badge_class; ?>"><?php echo $row['status']; ?></span></td>
                                     <td class="text-end pe-4">
@@ -323,13 +301,11 @@ while ($r = mysqli_fetch_assoc($result)) {
                 </div>
             </div>
 
-        </div><!-- end col -->
-    </div><!-- end row -->
-</div><!-- end container -->
+        </div>
+    </div>
+</div>
 
-<!-- ================================================================
-     MODALS — rendered outside the table to avoid broken HTML
-     ================================================================ -->
+<!-- MODALS — rendered outside the table to avoid broken HTML-->
 <?php foreach ($projects as $row):
     $p_id    = $row['id'];
     $inv     = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tbl_invoices WHERE project_id='$p_id' LIMIT 1"));
@@ -355,7 +331,7 @@ while ($r = mysqli_fetch_assoc($result)) {
             <div class="modal-body p-4">
                 <div class="row g-4">
 
-                    <!-- ===== LEFT: Status + Brief + Chat ===== -->
+                    <!-- ===== Status + Brief + Chat ===== -->
                     <div class="col-lg-5 border-end border-white border-opacity-10 pe-lg-4">
 
                         <!-- Project Status -->
@@ -421,9 +397,9 @@ while ($r = mysqli_fetch_assoc($result)) {
                             <button class="btn btn-adhub px-3" onclick="adminSendMessage(<?php echo $p_id; ?>)">Send</button>
                         </div>
 
-                    </div><!-- end left col -->
+                    </div>
 
-                    <!-- ===== RIGHT: Deliverables + Invoice + Payment ===== -->
+                    <!-- ===== Deliverables + Invoice + Payment ===== -->
                     <div class="col-lg-7">
 
                         <!-- Deliverables List -->
@@ -569,16 +545,15 @@ while ($r = mysqli_fetch_assoc($result)) {
                         </div>
                         <?php endif; ?>
 
-                    </div><!-- end right col -->
-                </div><!-- end row -->
-            </div><!-- end modal-body -->
+                    </div>
+                </div>
+            </div>
 
-        </div><!-- end modal-content -->
-    </div><!-- end modal-dialog -->
-</div><!-- end modal -->
+        </div>
+    </div>
+</div>
 <?php endforeach; ?>
 
-<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Auto-scroll chat feed to bottom when modal opens
@@ -616,14 +591,12 @@ while ($r = mysqli_fetch_assoc($result)) {
         });
     }
 
-    // Enter key to send
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && document.activeElement && document.activeElement.id.startsWith('adminMsgInput')) {
             adminSendMessage(parseInt(document.activeElement.id.replace('adminMsgInput', '')));
         }
     });
 
-    // Auto-reopen modal after POST redirect using ?open=
     <?php if (isset($_GET['open'])): ?>
     document.addEventListener('DOMContentLoaded', function () {
         var el = document.getElementById('modal<?php echo intval($_GET['open']); ?>');

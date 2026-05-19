@@ -9,9 +9,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
 
 $user_id = (int)$_SESSION['user_id'];
 
-// ---------------------------------------------------------------
 // POST HANDLERS
-// ---------------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Update Profile
@@ -59,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['change_status'])) {
         $pid        = intval($_POST['project_id']);
         $new_status = $_POST['status_val'];
-        // Whitelist: clients may only set these two statuses
         $allowed_statuses = ['completed', 'revision'];
         if (!in_array($new_status, $allowed_statuses)) {
             header("Location: client_dashboard.php");
@@ -155,9 +152,9 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
     <!-- STATS -->
     <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card p-4 text-center">
-                <small class="text-white-50 text-uppercase">Active Projects</small>
-                <h1 class="fw-bold mb-0"><?php echo $active_count; ?></h1>
+            <div class="card p-4 text-center" style="border-color:black">
+                <small class="text-black fw-bold text-uppercase">Active Projects</small>
+                <h1 class="text-black fw-bold mb-0"><?php echo $active_count; ?></h1>
             </div>
         </div>
         <div class="col-md-4">
@@ -167,9 +164,9 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card p-4 text-center">
-                <small class="text-white-50 text-uppercase">Completed</small>
-                <h1 class="fw-bold mb-0"><?php echo $delivered; ?></h1>
+            <div class="card p-4 text-center" style="border-color:black">
+                <small class="text-black fw-bold text-uppercase">Completed</small>
+                <h1 class="text-black fw-bold mb-0"><?php echo $delivered; ?></h1>
             </div>
         </div>
     </div>
@@ -302,7 +299,7 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
                             <?php endwhile; ?>
                         <?php endif; ?>
 
-                    </div><!-- end left col -->
+                    </div>
 
                     <!--Actions + Billing + Brief -->
                     <div class="col-lg-5">
@@ -398,9 +395,7 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
 </div>
 <?php endforeach; ?>
 
-<!-- ================================================================
-     PAY BALANCE MODALS — one per project that has an outstanding balance
-     ================================================================ -->
+<!--PAY BALANCE MODALS — one per project that has an outstanding balance-->
 <?php foreach ($projects as $ws2):
     $pid2  = $ws2['id'];
     $inv2  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tbl_invoices WHERE project_id='$pid2' LIMIT 1"));
@@ -478,8 +473,8 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
                             <select name="service_type" class="form-select">
                                 <option>Graphic Design</option>
                                 <option>Logo Design</option>
-                                <option>Video Editing</option>
-                                <option>Web Development</option>
+                                <option>Slogan</option>
+                                <option>Poster</option>
                             </select>
                         </div>
                         <div class="col-md-3">

@@ -1,5 +1,4 @@
 <?php
-// FIX: session_start() was missing — needed to pass feedback back to index.php
 session_start();
 include('db_connection.php');
 

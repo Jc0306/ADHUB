@@ -29,7 +29,6 @@ if (isset($_POST['login_btn'])) {
         }
         exit();
     } else {
-        // FIX: store error in session and redirect back to login modal instead of die()
         $_SESSION['login_error'] = "Invalid email or password. Please try again.";
         header("Location: index.php?modal=login");
         exit();

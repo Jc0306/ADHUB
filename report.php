@@ -35,7 +35,6 @@ if (!$proj) {
     exit("Project not found or access denied.");
 }
 
-// Related data
 $inv     = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tbl_invoices WHERE project_id='$project_id' LIMIT 1"));
 $balance = $inv ? round($inv['total_amount'] - $inv['amount_paid'], 2) : null;
 $pays_q  = $inv ? mysqli_query($conn, "SELECT * FROM tbl_payments WHERE invoice_id='{$inv['id']}' ORDER BY paid_at ASC") : null;
@@ -67,11 +66,11 @@ $generated = date('F d, Y \a\t g:i A');
         .section { padding: 28px 40px; border-bottom: 1px solid #e2e8f0; }
         .section:last-child { border-bottom: none; }
         .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #718096; margin-bottom: 16px; }
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-        .badge-pending   { background:#edf2f7; color:#4a5568; }
-        .badge-progress  { background:#fefcbf; color:#744210; }
-        .badge-revision  { background:#fed7d7; color:#742a2a; }
-        .badge-completed { background:#c6f6d5; color:#22543d; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; ;font-weight: 700; text-transform: uppercase; }
+        .badge-pending   { background:black; color:#4a5568; }
+        .badge-progress  { background:black; color:#744210; }
+        .badge-revision  { background:black; color:#742a2a; }
+        .badge-completed { background:black; color:#22543d; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f4f8; font-size: 13px; }
         .info-row:last-child { border-bottom: none; }

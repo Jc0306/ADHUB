@@ -31,7 +31,6 @@ mysqli_query($conn, "INSERT INTO tbl_messages (project_id, sender_id, message) V
 
 $insert_id = mysqli_insert_id($conn);
 
-// Return the saved message so JS can append it immediately
 $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT m.*, u.full_name, u.role FROM tbl_messages m JOIN tbl_users u ON u.id = m.sender_id WHERE m.id = '$insert_id'"));
 
 echo json_encode([
