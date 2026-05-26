@@ -131,7 +131,6 @@ $generated = date('F d, Y \a\t g:i A');
         <div class="section-title">Project Overview</div>
         <div class="grid-2">
             <div>
-                <div class="info-row"><span class="lbl">Priority</span><span class="val"><?php echo htmlspecialchars($proj['priority']); ?></span></div>
                 <div class="info-row"><span class="lbl">Created</span><span class="val"><?php echo date('M d, Y', strtotime($proj['created_at'])); ?></span></div>
                 <div class="info-row"><span class="lbl">Budget</span><span class="val">$<?php echo number_format($proj['budget'], 2); ?></span></div>
                 <div class="info-row"><span class="lbl">Payment Status</span><span class="val"><?php echo strtoupper($proj['payment_status']); ?></span></div>

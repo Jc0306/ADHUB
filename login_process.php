@@ -10,7 +10,7 @@ if (isset($_POST['login_btn'])) {
     $email    = mysqli_real_escape_string($conn, $_POST['email']);
     $password = mysqli_real_escape_string($conn, $_POST['password']);
 
-    $query  = "SELECT * FROM tbl_users WHERE email = '$email' AND password_hash = '$password' LIMIT 1";
+    $query  = "SELECT * FROM tbl_users WHERE email = '$email' AND password = '$password' LIMIT 1";
     $result = mysqli_query($conn, $query);
 
     if ($result && mysqli_num_rows($result) > 0) {

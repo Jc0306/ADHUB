@@ -24,7 +24,7 @@ if (isset($_POST['register_btn'])) {
     }
 
     // Insert new client
-    $query = "INSERT INTO tbl_users (full_name, email, password_hash, role, company_name) 
+    $query = "INSERT INTO tbl_users (full_name, email, password, role, company_name) 
               VALUES ('$full_name', '$email', '$password', 'client', '$company')";
 
     if (mysqli_query($conn, $query)) {

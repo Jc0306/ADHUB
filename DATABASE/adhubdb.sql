@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2026 at 05:24 PM
+-- Generation Time: May 26, 2026 at 02:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,7 +41,9 @@ CREATE TABLE `tbl_deliverables` (
 --
 
 INSERT INTO `tbl_deliverables` (`id`, `project_id`, `file_path`, `display_name`, `version`, `uploaded_at`) VALUES
-(1, 2, 'uploads/deliverables/project_2_v1_1778641610.jpg', 'Poster', 1, '2026-05-13 03:06:50');
+(1, 2, 'uploads/deliverables/project_2_v1_1778641610.jpg', 'Poster', 1, '2026-05-13 03:06:50'),
+(2, 6, 'uploads/deliverables/project_6_v1_1779792745.pdf', 'Research Paper Final.pdf', 1, '2026-05-26 10:52:25'),
+(3, 7, 'uploads/deliverables/project_7_v1_1779795051.pdf', 'ARAW.pdf', 1, '2026-05-26 11:30:51');
 
 -- --------------------------------------------------------
 
@@ -65,7 +67,9 @@ CREATE TABLE `tbl_invoices` (
 INSERT INTO `tbl_invoices` (`id`, `project_id`, `total_amount`, `amount_paid`, `status`, `due_date`) VALUES
 (1, 2, 500.00, 500.00, 'paid', '2026-05-28'),
 (3, 4, 1000.00, 1000.00, 'paid', '0000-00-00'),
-(4, 5, 500.00, 0.00, 'unpaid', '2026-05-23');
+(4, 5, 500.00, 0.00, 'unpaid', '2026-05-23'),
+(5, 6, 500.00, 250.00, 'partial', '2026-05-30'),
+(6, 7, 500.00, 500.00, 'paid', '2026-05-30');
 
 -- --------------------------------------------------------
 
@@ -92,7 +96,11 @@ INSERT INTO `tbl_messages` (`id`, `project_id`, `sender_id`, `message`, `sent_at
 (3, 2, 2, 'thank you!!', '2026-05-13 03:08:46', '2026-05-13 03:08:46'),
 (4, 2, 2, 'hey', '2026-05-13 03:12:49', '2026-05-13 03:12:49'),
 (5, 2, 2, 'hi', '2026-05-13 03:13:14', '2026-05-13 03:13:14'),
-(6, 2, 2, 'hey', '2026-05-13 03:16:32', '2026-05-13 03:16:32');
+(6, 2, 2, 'hey', '2026-05-13 03:16:32', '2026-05-13 03:16:32'),
+(7, 6, 2, 'Hello bakla', '2026-05-26 10:51:13', '2026-05-26 10:51:13'),
+(8, 6, 1, 'bakla', '2026-05-26 10:51:53', '2026-05-26 10:51:53'),
+(9, 7, 5, 'Hello po', '2026-05-26 11:28:44', '2026-05-26 11:28:44'),
+(10, 7, 1, 'Hi client', '2026-05-26 11:30:35', '2026-05-26 11:30:35');
 
 -- --------------------------------------------------------
 
@@ -115,7 +123,10 @@ CREATE TABLE `tbl_payments` (
 INSERT INTO `tbl_payments` (`id`, `invoice_id`, `amount`, `payment_method`, `paid_at`) VALUES
 (1, 1, 500.00, 'GCash', '2026-05-12 11:47:38'),
 (4, 3, 500.00, 'GCash', '2026-05-14 03:49:41'),
-(5, 3, 500.00, 'Cash', '2026-05-14 03:50:34');
+(5, 3, 500.00, 'Cash', '2026-05-14 03:50:34'),
+(6, 5, 250.00, 'GCash', '2026-05-26 10:53:02'),
+(7, 6, 250.00, 'GCash', '2026-05-26 11:31:24'),
+(8, 6, 250.00, 'GCash', '2026-05-26 11:31:35');
 
 -- --------------------------------------------------------
 
@@ -143,7 +154,9 @@ CREATE TABLE `tbl_projects` (
 INSERT INTO `tbl_projects` (`id`, `client_id`, `title`, `service_type`, `budget`, `payment_status`, `description`, `status`, `progress_percent`, `created_at`) VALUES
 (2, 2, 'Painting', 'Graphic Design', 500.00, 'paid', 'Gusto ko maganda', 'completed', 100, '2026-05-12 05:37:55'),
 (4, 2, 'POSTER', 'Graphic Design', 1000.00, 'paid', 'OKI DOC', 'in-progress', 20, '2026-05-14 03:48:16'),
-(5, 3, 'Tula', 'Graphic Design', 500.00, 'unpaid', 'Mahaba', 'pending', 0, '2026-05-19 15:04:15');
+(5, 3, 'Tula', 'Graphic Design', 500.00, 'unpaid', 'Mahaba', 'pending', 0, '2026-05-19 15:04:15'),
+(6, 2, 'Black', 'Poster', 500.00, 'partial', 'GUsto ko babae', 'completed', 50, '2026-05-26 10:51:02'),
+(7, 5, 'NBA', 'Logo Design', 500.00, 'paid', 'Gusto ko si jordan', 'completed', 0, '2026-05-26 11:28:28');
 
 -- --------------------------------------------------------
 
@@ -155,7 +168,7 @@ CREATE TABLE `tbl_users` (
   `id` int(11) NOT NULL,
   `full_name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password_hash` text NOT NULL,
+  `password` varchar(255) NOT NULL,
   `role` enum('client','admin') DEFAULT 'client',
   `company_name` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -165,11 +178,12 @@ CREATE TABLE `tbl_users` (
 -- Dumping data for table `tbl_users`
 --
 
-INSERT INTO `tbl_users` (`id`, `full_name`, `email`, `password_hash`, `role`, `company_name`, `created_at`) VALUES
+INSERT INTO `tbl_users` (`id`, `full_name`, `email`, `password`, `role`, `company_name`, `created_at`) VALUES
 (1, 'ADMIN', 'admin@gmail.com', 'ADMIN', 'admin', 'ADMIN', '2026-05-11 16:30:35'),
-(2, 'Philip Strongs', 'Phil@gmail.com', 'phil', 'client', 'Strongs', '2026-05-11 17:43:23'),
+(2, 'Philip Strongi', 'Phil@gmail.com', 'phil', 'client', 'Strongi', '2026-05-11 17:43:23'),
 (3, 'JC Dincos', 'jcdinco@gmail.com', 'jcdinco', 'client', 'Jc company', '2026-05-13 03:22:16'),
-(4, 'Gabby', 'gab@gmail.com', 'gabby', 'client', 'Gab company', '2026-05-13 03:24:13');
+(4, 'Gabby', 'gab@gmail.com', 'gabby', 'client', 'Gab company', '2026-05-13 03:24:13'),
+(5, 'John Carlos', 'jcdinco6@gmail.com', 'jcdinco', 'client', 'Jc Company', '2026-05-26 11:27:16');
 
 --
 -- Indexes for dumped tables
@@ -226,37 +240,37 @@ ALTER TABLE `tbl_users`
 -- AUTO_INCREMENT for table `tbl_deliverables`
 --
 ALTER TABLE `tbl_deliverables`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_invoices`
 --
 ALTER TABLE `tbl_invoices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tbl_messages`
 --
 ALTER TABLE `tbl_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tbl_payments`
 --
 ALTER TABLE `tbl_payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tbl_projects`
 --
 ALTER TABLE `tbl_projects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
