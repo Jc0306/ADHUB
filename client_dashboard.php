@@ -27,8 +27,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['new_request_btn'])) {
         $title        = mysqli_real_escape_string($conn, trim($_POST['title']));
         $service_type = mysqli_real_escape_string($conn, $_POST['service_type']);
-        $budget       = floatval($_POST['budget']);
+        $budget       = trim($_POST['budget']);
         $description  = mysqli_real_escape_string($conn, trim($_POST['description']));
+
+        // Server-side validation
+        if ($title === '') {
+            $_SESSION['request_error'] = "Project title is required.";
+            header("Location: client_dashboard.php?modal=newRequest");
+            exit();
+        }
+        if ($budget === '' || !is_numeric($budget) || floatval($budget) < 0) {
+            $_SESSION['request_error'] = "A valid budget is required.";
+            header("Location: client_dashboard.php?modal=newRequest");
+            exit();
+        }
+
+        $budget = floatval($budget);
         mysqli_query($conn, "INSERT INTO tbl_projects (client_id, title, service_type, budget, description, status, progress_percent) VALUES ('$user_id','$title','$service_type','$budget','$description','pending',0)");
         header("Location: client_dashboard.php?msg=submitted");
         exit();
@@ -145,6 +159,12 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
     ?>
     <div class="alert alert-<?php echo $type; ?> alert-dismissible fade show mb-4" role="alert">
         <?php echo $text; ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['request_error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        ✕ <?php echo htmlspecialchars($_SESSION['request_error']); unset($_SESSION['request_error']); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
     <?php endif; ?>
@@ -462,7 +482,7 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <form method="POST">
+                <form method="POST" id="newRequestForm" onsubmit="return validateNewRequest()">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label>Project Title</label>
@@ -479,7 +499,7 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
                         </div>
                         <div class="col-md-3">
                             <label>Budget ($)</label>
-                            <input type="number" name="budget" class="form-control" placeholder="e.g. 300" min="0" step="0.01">
+                            <input type="number" name="budget" class="form-control" placeholder="e.g. 300" min="0" step="0.01" required>
                         </div>
                         <div class="col-12">
                             <label>Brief Details &amp; Instructions</label>
@@ -524,6 +544,35 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
 
 <!-- SCRIPTS -->
 <script>
+    // ---- New Request form validation ----
+    function validateNewRequest() {
+        var title  = document.querySelector('#newRequestForm [name="title"]').value.trim();
+        var budget = document.querySelector('#newRequestForm [name="budget"]').value.trim();
+        var titleInput  = document.querySelector('#newRequestForm [name="title"]');
+        var budgetInput = document.querySelector('#newRequestForm [name="budget"]');
+
+        titleInput.classList.remove('is-invalid');
+        budgetInput.classList.remove('is-invalid');
+
+        var valid = true;
+        if (!title) {
+            titleInput.classList.add('is-invalid');
+            valid = false;
+        }
+        if (!budget || isNaN(budget) || parseFloat(budget) < 0) {
+            budgetInput.classList.add('is-invalid');
+            valid = false;
+        }
+        return valid;
+    }
+
+    // ---- Auto-reopen New Request modal if there was a server-side error ----
+    <?php if (isset($_GET['modal']) && $_GET['modal'] === 'newRequest'): ?>
+    document.addEventListener('DOMContentLoaded', function () {
+        new bootstrap.Modal(document.getElementById('newRequestModal')).show();
+    });
+    <?php endif; ?>
+
     // ---- Profile save confirmation ----
     function confirmSaveProfile() {
         if (confirm('Are you sure you want to save these changes?')) {
