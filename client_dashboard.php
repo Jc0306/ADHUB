@@ -9,7 +9,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'client') {
 
 $user_id = (int)$_SESSION['user_id'];
 
-// POST HANDLERS
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Update Profile
@@ -53,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pid    = intval($_POST['project_id']);
         $amount = floatval($_POST['payment_amount']);
         $method = mysqli_real_escape_string($conn, $_POST['payment_method']);
-        // Ownership check: verify this project belongs to the logged-in client before touching the invoice
+        // verify this project belongs to the logged-in client before touching the invoice
         $inv    = mysqli_fetch_assoc(mysqli_query($conn, "SELECT i.id, i.total_amount, i.amount_paid FROM tbl_invoices i JOIN tbl_projects p ON p.id = i.project_id WHERE i.project_id='$pid' AND p.client_id='$user_id' LIMIT 1"));
         if ($inv) {
             $inv_id     = $inv['id'];
@@ -94,7 +93,7 @@ while ($r = mysqli_fetch_assoc($proj_result)) {
 }
 
 // Stats
-$active_count   = count(array_filter($projects, fn($p) => $p['status'] !== 'completed'));
+$active_count   = count(array_filter($projects, fn($p) => !in_array($p['status'], ['completed', 'rejected'])));
 $delivered      = count(array_filter($projects, fn($p) => $p['status'] === 'completed'));
 $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revision'));
 ?>
@@ -228,6 +227,7 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
                             'in-progress' => ['bg-warning text-dark', 'In Progress'],
                             'revision'    => ['bg-danger', 'Revision Needed'],
                             'completed'   => ['bg-success', 'Completed'],
+                            'rejected'    => ['bg-danger', 'Rejected'],
                             default       => ['bg-primary', ucfirst($row['status'])]
                         };
                         ?>
@@ -241,7 +241,9 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
                     </td>
                     <td class="text-end pe-4">
                         <button class="btn btn-sm btn-adhub px-3" data-bs-toggle="modal" data-bs-target="#ws<?php echo $row['id']; ?>">Open Workspace</button>
+                        <?php if ($row['status'] !== 'rejected'): ?>
                         <a href="report.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-outline-light ms-1" target="_blank">Report</a>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -251,7 +253,7 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
 
 </div>
 
-<!--WORKSPACE MODALS — one per project, outside the table-->
+<!--WORKSPACE MODALS-->
 <?php foreach ($projects as $ws):
     $pid     = $ws['id'];
     $msgs_q  = mysqli_query($conn, "SELECT m.*, u.full_name, u.role FROM tbl_messages m JOIN tbl_users u ON u.id = m.sender_id WHERE m.project_id = '$pid' ORDER BY m.id ASC");
@@ -273,6 +275,13 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
 
             <!-- Body -->
             <div class="modal-body p-4">
+                <?php if ($ws['status'] === 'rejected'): ?>
+                <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center">
+                    <div style="font-size:3rem;">🚫</div>
+                    <h5 class="fw-bold text-danger mt-3 mb-2">Project Rejected</h5>
+                    <p class="text-white-50 small mb-0">This project request has been rejected by the admin.<br>No further actions are available for this project.</p>
+                </div>
+                <?php else: ?>
                 <div class="row g-4">
 
                     <!-- Chat + Deliverables -->
@@ -408,6 +417,7 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
 
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
 
         </div>
@@ -415,7 +425,7 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
 </div>
 <?php endforeach; ?>
 
-<!--PAY BALANCE MODALS — one per project that has an outstanding balance-->
+<!--PAY BALANCE MODALS -->
 <?php foreach ($projects as $ws2):
     $pid2  = $ws2['id'];
     $inv2  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tbl_invoices WHERE project_id='$pid2' LIMIT 1"));
@@ -542,7 +552,6 @@ $needs_feedback = count(array_filter($projects, fn($p) => $p['status'] === 'revi
     </div>
 </div>
 
-<!-- SCRIPTS -->
 <script>
     // ---- New Request form validation ----
     function validateNewRequest() {

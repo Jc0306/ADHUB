@@ -16,7 +16,7 @@ if ($project_id <= 0 || $message === '') {
     exit();
 }
 
-// Ownership check: clients can only message their own projects
+// clients can only message their own projects
 if ($_SESSION['role'] === 'client') {
     $check = mysqli_fetch_assoc(mysqli_query($conn,
         "SELECT id FROM tbl_projects WHERE id = '$project_id' AND client_id = '$sender_id' LIMIT 1"));

@@ -11,7 +11,7 @@ if (isset($_POST['update_btn'])) {
     $project_id     = intval($_POST['project_id']);
 
     // Whitelist status against the DB enum
-    $allowed_statuses = ['pending', 'in-progress', 'revision', 'completed'];
+    $allowed_statuses = ['pending', 'in-progress', 'revision', 'completed', 'rejected'];
     $status = in_array($_POST['status'], $allowed_statuses) ? $_POST['status'] : 'pending';
 
     // Whitelist payment_status against known values

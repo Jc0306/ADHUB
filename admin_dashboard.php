@@ -189,6 +189,7 @@ while ($r = mysqli_fetch_assoc($result)) {
                 $alert_msgs = [
                     'updated'          => '<strong>Saved!</strong> Project updated.',
                     'deleted'          => '<strong>Removed!</strong> Project deleted.',
+                    'rejected'         => '<strong>Rejected!</strong> Project has been marked as rejected.',
                     'file_uploaded'    => '<strong>Uploaded!</strong> File sent to client.',
                     'invoice_saved'    => '<strong>Invoice saved!</strong>',
                     'payment_recorded' => '<strong>Payment recorded!</strong>',
@@ -244,6 +245,7 @@ while ($r = mysqli_fetch_assoc($result)) {
                         <option value="in-progress" <?php echo ($status_filter === 'in-progress') ? 'selected' : ''; ?>>In Progress</option>
                         <option value="revision"    <?php echo ($status_filter === 'revision')    ? 'selected' : ''; ?>>Revision</option>
                         <option value="completed"   <?php echo ($status_filter === 'completed')   ? 'selected' : ''; ?>>Completed</option>
+                        <option value="rejected"    <?php echo ($status_filter === 'rejected')    ? 'selected' : ''; ?>>Rejected</option>
                     </select>
                     <button type="submit" name="filter_btn" class="btn btn-adhub btn-sm px-3">Filter</button>
                     <?php if (isset($_GET['filter_btn'])): ?>
@@ -275,6 +277,7 @@ while ($r = mysqli_fetch_assoc($result)) {
                                         'in-progress' => 'bg-warning text-dark',
                                         'revision'    => 'bg-revision',
                                         'completed'   => 'bg-success',
+                                        'rejected'    => 'bg-danger',
                                         default       => 'bg-primary'
                                     };
                                 ?>
@@ -288,7 +291,9 @@ while ($r = mysqli_fetch_assoc($result)) {
                                     <td><span class="status-badge <?php echo $badge_class; ?>"><?php echo $row['status']; ?></span></td>
                                     <td class="text-end pe-4">
                                         <button class="btn btn-sm btn-adhub" data-bs-toggle="modal" data-bs-target="#modal<?php echo $row['id']; ?>">Manage</button>
+                                        <?php if ($row['status'] !== 'rejected'): ?>
                                         <a href="report.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-outline-light ms-1" target="_blank">Report</a>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -331,11 +336,19 @@ while ($r = mysqli_fetch_assoc($result)) {
             <div class="modal-body p-4">
                 <div class="row g-4">
 
-                    <!-- ===== Status + Brief + Chat ===== -->
+                    <!--Status + Brief + Chat-->
                     <div class="col-lg-5 border-end border-white border-opacity-10 pe-lg-4">
 
                         <!-- Project Status -->
                         <span class="section-label">Project Status</span>
+                        <?php if ($row['status'] === 'rejected'): ?>
+                        <div class="p-3 mb-4 rounded text-center" style="background:rgba(220,53,69,0.1);border:1px solid rgba(220,53,69,0.3);">
+                            <span class="text-danger fw-bold">🚫 This project has been rejected. Status cannot be changed.</span>
+                            <div class="mt-2">
+                                <a href="delete_project.php?id=<?php echo $p_id; ?>" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this project permanently?');">Delete</a>
+                            </div>
+                        </div>
+                        <?php else: ?>
                         <form action="update_project.php" method="POST" class="mb-4">
                             <input type="hidden" name="project_id" value="<?php echo $p_id; ?>">
                             <div class="row g-2 mb-2">
@@ -346,6 +359,7 @@ while ($r = mysqli_fetch_assoc($result)) {
                                         <option value="in-progress" <?php if ($row['status'] === 'in-progress') echo 'selected'; ?>>In Progress</option>
                                         <option value="revision"    <?php if ($row['status'] === 'revision')    echo 'selected'; ?>>Revision</option>
                                         <option value="completed"   <?php if ($row['status'] === 'completed')   echo 'selected'; ?>>Completed</option>
+                                        <option value="rejected"    <?php if ($row['status'] === 'rejected')    echo 'selected'; ?>>Rejected</option>
                                     </select>
                                 </div>
                                 <div class="col-6">
@@ -363,9 +377,13 @@ while ($r = mysqli_fetch_assoc($result)) {
                             </div>
                             <div class="d-flex gap-2">
                                 <button type="submit" name="update_btn" class="btn btn-adhub btn-sm px-4">Save Status</button>
+                                <?php if (!$inv): ?>
+                                <a href="reject_project.php?id=<?php echo $p_id; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Reject this project? The client will be notified.');">Reject</a>
+                                <?php endif; ?>
                                 <a href="delete_project.php?id=<?php echo $p_id; ?>" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this project permanently?');">Delete</a>
                             </div>
                         </form>
+                        <?php endif; ?>
 
                         <!-- Project Brief -->
                         <span class="section-label">Project Brief</span>
@@ -392,15 +410,31 @@ while ($r = mysqli_fetch_assoc($result)) {
                             </div>
                             <?php endwhile; ?>
                         </div>
+                        <?php if ($row['status'] !== 'rejected'): ?>
                         <div class="input-group input-group-sm">
                             <input type="text" id="adminMsgInput<?php echo $p_id; ?>" class="form-control" placeholder="Type a message to the client...">
                             <button class="btn btn-adhub px-3" onclick="adminSendMessage(<?php echo $p_id; ?>)">Send</button>
                         </div>
+                        <?php else: ?>
+                        <div class="input-group input-group-sm" style="opacity:0.4;pointer-events:none;">
+                            <input type="text" class="form-control" placeholder="Messaging disabled — project rejected." disabled>
+                            <button class="btn btn-adhub px-3" disabled>Send</button>
+                        </div>
+                        <?php endif; ?>
 
                     </div>
 
-                    <!-- ===== Deliverables + Invoice + Payment ===== -->
+                    <!-- Deliverables + Invoice + Payment -->
                     <div class="col-lg-7">
+
+                    <?php if ($row['status'] === 'rejected'): ?>
+                        <!-- REJECTED NOTICE -->
+                        <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5 text-center">
+                            <div style="font-size:3rem;">🚫</div>
+                            <h5 class="fw-bold text-danger mt-3 mb-2">Project Rejected</h5>
+                            <p class="text-white-50 small mb-0">This project request has been rejected.<br>File uploads, invoicing, and payments are no longer available.</p>
+                        </div>
+                    <?php else: ?>
 
                         <!-- Deliverables List -->
                         <span class="section-label">Deliverables Sent to Client</span>
@@ -545,6 +579,7 @@ while ($r = mysqli_fetch_assoc($result)) {
                         </div>
                         <?php endif; ?>
 
+                    <?php endif; ?>
                     </div>
                 </div>
             </div>
