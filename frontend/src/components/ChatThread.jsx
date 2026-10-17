@@ -6,12 +6,10 @@ import { formatDate } from '../constants.js';
 const POLL_MS = 3000;
 
 /**
- * Chat conversation view with ~3s polling. Admins pass clientId + an
- * optional projectId (project thread); omit both for the client's own
- * General thread. Parents should pass a `key` per thread so switching
- * threads remounts fresh state.
+ * Project chat conversation view with ~3s polling. Parents should pass a
+ * `key` per project so switching threads remounts fresh state.
  */
-export default function ChatThread({ clientId = null, projectId = null }) {
+export default function ChatThread({ projectId }) {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState('');
@@ -28,12 +26,7 @@ export default function ChatThread({ clientId = null, projectId = null }) {
 
     async function load(afterId) {
       const params = new URLSearchParams();
-      if (clientId != null) {
-        params.set('client_id', clientId);
-      }
-      if (projectId != null) {
-        params.set('project_id', projectId);
-      }
+      params.set('project_id', projectId);
       if (afterId > 0) {
         params.set('after_id', afterId);
       }
@@ -68,7 +61,7 @@ export default function ChatThread({ clientId = null, projectId = null }) {
       cancelled = true;
       clearInterval(timer);
     };
-  }, [clientId, projectId]);
+  }, [projectId]);
 
   // Keep the newest message in view (instant on thread switch, smooth after).
   useEffect(() => {
@@ -90,15 +83,7 @@ export default function ChatThread({ clientId = null, projectId = null }) {
 
     setSending(true);
     try {
-      const payload = { body };
-      if (clientId != null) {
-        payload.client_id = clientId;
-      }
-      if (projectId != null) {
-        payload.project_id = projectId;
-      }
-
-      const data = await apiPost('/chat/send.php', payload);
+      const data = await apiPost('/chat/send.php', { body, project_id: projectId });
       lastIdRef.current = Math.max(lastIdRef.current, data.message.id);
       setMessages((prev) =>
         prev.some((m) => m.id === data.message.id) ? prev : [...prev, data.message]

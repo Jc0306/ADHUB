@@ -1,9 +1,8 @@
 <?php
 /**
- * GET /api/chat/list.php?client_id=&project_id=&after_id= — messages in a
- * thread, oldest first. Threads: a client's General chat (no project_id) or
- * a per-project chat. Admins pick the client; clients always get their own.
- * after_id fetches only newer messages (polling).
+ * GET /api/chat/list.php?project_id=&after_id= — a project's chat messages,
+ * oldest first. after_id fetches only newer messages (polling). Admins can
+ * open any project; clients only their own (404 otherwise).
  *
  * Opening/fetching a thread also marks the other side's messages as read.
  */
@@ -12,44 +11,28 @@ require_once __DIR__ . '/../config.php';
 require_method('GET');
 $user = require_login();
 
-$afterId   = (int) ($_GET['after_id'] ?? 0);
 $projectId = (int) ($_GET['project_id'] ?? 0);
+$afterId   = (int) ($_GET['after_id'] ?? 0);
 
-if ($user['role'] === 'admin') {
-    $clientId = (int) ($_GET['client_id'] ?? 0);
-
-    $stmt = db()->prepare("SELECT id FROM tbl_users WHERE id = ? AND role = 'client' LIMIT 1");
-    $stmt->execute([$clientId]);
-
-    if (!$stmt->fetch()) {
-        json_error('Client not found.', 404);
-    }
-} else {
-    $clientId = $user['id'];
+if ($projectId <= 0) {
+    json_error('project_id is required.');
 }
 
-if ($projectId > 0) {
-    require_chat_project($projectId, $clientId);
-    $threadWhere = 'project_id = ?';
-    $threadArgs  = [$projectId];
-} else {
-    $threadWhere = 'project_id IS NULL';
-    $threadArgs  = [];
-}
+require_chat_project($projectId, $user);
 
 $stmt = db()->prepare(
-    "SELECT id, client_id, project_id, sender_id, body, created_at, read_at
+    "SELECT id, project_id, sender_id, body, created_at, read_at
      FROM tbl_chat_messages
-     WHERE client_id = ? AND $threadWhere AND id > ?
+     WHERE project_id = ? AND id > ?
      ORDER BY id ASC"
 );
-$stmt->execute(array_merge([$clientId], $threadArgs, [$afterId]));
+$stmt->execute([$projectId, $afterId]);
 $messages = array_map('public_message', $stmt->fetchAll());
 
 $stmt = db()->prepare(
     "UPDATE tbl_chat_messages SET read_at = NOW()
-     WHERE client_id = ? AND $threadWhere AND sender_id != ? AND read_at IS NULL"
+     WHERE project_id = ? AND sender_id != ? AND read_at IS NULL"
 );
-$stmt->execute(array_merge([$clientId], $threadArgs, [$user['id']]));
+$stmt->execute([$projectId, $user['id']]);
 
 json_response(['messages' => $messages]);

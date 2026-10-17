@@ -191,8 +191,7 @@ function public_message(array $row): array
 {
     return [
         'id'         => (int) $row['id'],
-        'client_id'  => (int) $row['client_id'],
-        'project_id' => $row['project_id'] !== null ? (int) $row['project_id'] : null,
+        'project_id' => (int) $row['project_id'],
         'sender_id'  => (int) $row['sender_id'],
         'body'       => $row['body'],
         'created_at' => $row['created_at'],
@@ -204,7 +203,7 @@ function public_message(array $row): array
 function find_chat_message(int $id): ?array
 {
     $stmt = db()->prepare(
-        'SELECT id, client_id, project_id, sender_id, body, created_at, read_at
+        'SELECT id, project_id, sender_id, body, created_at, read_at
          FROM tbl_chat_messages WHERE id = ? LIMIT 1'
     );
     $stmt->execute([$id]);
@@ -213,13 +212,16 @@ function find_chat_message(int $id): ?array
     return $row ? public_message($row) : null;
 }
 
-/** Validate that a project exists and belongs to the given client (chat threads). */
-function require_chat_project(int $projectId, int $clientId): void
+/** Validate the user may use a project's chat (admin, or the project's own client); returns the project row. */
+function require_chat_project(int $projectId, array $user): array
 {
-    $stmt = db()->prepare('SELECT id FROM tbl_projects WHERE id = ? AND client_id = ? LIMIT 1');
-    $stmt->execute([$projectId, $clientId]);
+    $stmt = db()->prepare('SELECT id, client_id, title FROM tbl_projects WHERE id = ? LIMIT 1');
+    $stmt->execute([$projectId]);
+    $project = $stmt->fetch();
 
-    if (!$stmt->fetch()) {
-        json_error('Project not found for this client.', 404);
+    if (!$project || ($user['role'] !== 'admin' && (int) $project['client_id'] !== (int) $user['id'])) {
+        json_error('Project not found.', 404);
     }
+
+    return $project;
 }

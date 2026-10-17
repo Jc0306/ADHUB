@@ -9,7 +9,12 @@ if ($user['role'] === 'admin') {
     $stmt = db()->prepare('SELECT COUNT(*) AS n FROM tbl_chat_messages WHERE sender_id != ? AND read_at IS NULL');
     $stmt->execute([$user['id']]);
 } else {
-    $stmt = db()->prepare('SELECT COUNT(*) AS n FROM tbl_chat_messages WHERE client_id = ? AND sender_id != ? AND read_at IS NULL');
+    $stmt = db()->prepare(
+        'SELECT COUNT(*) AS n
+         FROM tbl_chat_messages m
+         JOIN tbl_projects p ON p.id = m.project_id
+         WHERE p.client_id = ? AND m.sender_id != ? AND m.read_at IS NULL'
+    );
     $stmt->execute([$user['id'], $user['id']]);
 }
 

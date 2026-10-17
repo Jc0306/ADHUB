@@ -302,7 +302,7 @@ export default function AdminProjectDetail() {
 
           <div className="adhub-card p-4 mt-4">
             <h2 className="h5 mb-3">Project Chat</h2>
-            <ChatThread key={project.id} clientId={project.client_id} projectId={project.id} />
+            <ChatThread key={project.id} projectId={project.id} />
           </div>
         </div>
 
