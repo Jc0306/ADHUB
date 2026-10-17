@@ -196,6 +196,23 @@ body {
   border-bottom: 1px solid var(--adhub-border);
 }
 
+.adhub-nav-link {
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  font-weight: 500;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.adhub-nav-link:hover {
+  color: #fff;
+}
+
+.adhub-nav-link.active {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.6);
+}
+
 .text-muted-light {
   color: rgba(255, 255, 255, 0.6) !important;
 }

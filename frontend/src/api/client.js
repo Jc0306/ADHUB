@@ -8,6 +8,11 @@ async function request(path, options = {}) {
 
   const data = await res.json().catch(() => ({}));
 
+  // Expired session on a protected endpoint -> let AuthContext sign the user out.
+  if (res.status === 401 && !path.startsWith('/auth')) {
+    window.dispatchEvent(new Event('adhub:unauthorized'));
+  }
+
   if (!res.ok) {
     throw new Error(data.error || `Request failed (${res.status})`);
   }

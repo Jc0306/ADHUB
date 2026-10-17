@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import DashboardShell from '../components/DashboardShell.jsx';
 import { apiGet, apiPost } from '../api/client.js';
+import { showToast } from '../toast.js';
 import { formatMoney } from '../constants.js';
 
 export default function CostsPage() {
   const [clients, setClients] = useState([]);
   const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(true);
   const [topupFor, setTopupFor] = useState(null);
   const [amount, setAmount] = useState('');
@@ -22,7 +22,6 @@ export default function CostsPage() {
 
   async function handleTopup(client) {
     setError('');
-    setNotice('');
     setBusy(true);
 
     try {
@@ -39,7 +38,7 @@ export default function CostsPage() {
             : c
         )
       );
-      setNotice(`Added ${formatMoney(amount)} to ${client.full_name}'s retainer.`);
+      showToast(`Added ${formatMoney(amount)} to ${client.full_name}'s retainer.`);
       setTopupFor(null);
       setAmount('');
       setNote('');
@@ -57,7 +56,6 @@ export default function CostsPage() {
       </div>
 
       {error && <div className="alert alert-danger py-2">{error}</div>}
-      {notice && <div className="alert alert-success py-2">{notice}</div>}
 
       <div className="adhub-card p-4">
         {loading && <p className="text-muted-light mb-0">Loading…</p>}

@@ -10,6 +10,7 @@ import ClientProjectDetail from './pages/ClientProjectDetail.jsx';
 import CostsPage from './pages/CostsPage.jsx';
 import ProjectReport from './pages/ProjectReport.jsx';
 import AnalyticsPage from './pages/AnalyticsPage.jsx';
+import ToastHost from './components/ToastHost.jsx';
 
 /** Landing route for the user's role. */
 function roleHome(user) {
@@ -59,7 +60,9 @@ function AuthRoute({ children }) {
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <ToastHost />
+      <Routes>
       <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -128,6 +131,7 @@ export default function App() {
         }
       />
       <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+      </Routes>
+    </>
   );
 }

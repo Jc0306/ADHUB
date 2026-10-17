@@ -1,10 +1,20 @@
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
-/** Shared chrome for the admin and client dashboards. */
+const ADMIN_LINKS = [
+  { to: '/admin', label: 'Dashboard', end: true },
+  { to: '/admin/costs', label: 'Cost Tracking' },
+  { to: '/admin/analytics', label: 'Analytics' },
+];
+
+const CLIENT_LINKS = [{ to: '/client', label: 'Dashboard', end: true }];
+
+/** Shared chrome (navbar + page title) for the admin and client areas. */
 export default function DashboardShell({ subtitle, children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const links = user?.role === 'admin' ? ADMIN_LINKS : CLIENT_LINKS;
 
   async function handleLogout() {
     await logout();
@@ -17,6 +27,19 @@ export default function DashboardShell({ subtitle, children }) {
         <div className="d-flex align-items-center gap-3">
           <span className="fw-bold fs-4">ADHUB</span>
           <span className="badge text-bg-secondary text-uppercase">{user?.role}</span>
+        </div>
+
+        <div className="d-flex align-items-center gap-4">
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.end}
+              className={({ isActive }) => `adhub-nav-link${isActive ? ' active' : ''}`}
+            >
+              {link.label}
+            </NavLink>
+          ))}
         </div>
 
         <div className="d-flex align-items-center gap-3">

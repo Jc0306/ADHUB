@@ -4,6 +4,7 @@ import DashboardShell from '../components/DashboardShell.jsx';
 import DeliverablesTable from '../components/DeliverablesTable.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
 import { apiGet, apiPost } from '../api/client.js';
+import { showToast } from '../toast.js';
 import { formatDate, formatMoney } from '../constants.js';
 
 export default function ClientProjectDetail() {
@@ -31,6 +32,7 @@ export default function ClientProjectDetail() {
         ),
       }));
       setError('');
+      showToast(action === 'approve' ? 'Deliverable approved.' : 'Revision requested.');
     } catch (err) {
       setError(err.message);
       throw err;

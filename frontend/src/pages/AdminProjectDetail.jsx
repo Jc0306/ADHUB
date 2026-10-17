@@ -4,6 +4,7 @@ import DashboardShell from '../components/DashboardShell.jsx';
 import DeliverablesTable from '../components/DeliverablesTable.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
 import { apiGet, apiPost, apiUpload } from '../api/client.js';
+import { showToast } from '../toast.js';
 import { PROJECT_STATUSES, SERVICE_TYPES, STATUS_LABELS, formatDate, formatMoney } from '../constants.js';
 
 export default function AdminProjectDetail() {
@@ -20,7 +21,6 @@ export default function AdminProjectDetail() {
   const [displayName, setDisplayName] = useState('');
   const [logForm, setLogForm] = useState({ hours: '', hourly_rate: '25', note: '' });
   const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
 
   function load() {
@@ -56,7 +56,6 @@ export default function AdminProjectDetail() {
   async function handleSave(e) {
     e.preventDefault();
     setError('');
-    setNotice('');
     setBusy(true);
 
     try {
@@ -66,7 +65,7 @@ export default function AdminProjectDetail() {
         progress_percent: Number(edit.progress_percent),
       });
       setProject(data.project);
-      setNotice('Project details saved.');
+      showToast('Project details saved.');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -77,7 +76,6 @@ export default function AdminProjectDetail() {
   async function handleUpload(e) {
     e.preventDefault();
     setError('');
-    setNotice('');
 
     if (!file) {
       setError('Choose a file to upload.');
@@ -99,7 +97,7 @@ export default function AdminProjectDetail() {
         fileRef.current.value = '';
       }
       await load();
-      setNotice('Deliverable uploaded.');
+      showToast('Deliverable uploaded.');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -110,7 +108,6 @@ export default function AdminProjectDetail() {
   async function handleLogHours(e) {
     e.preventDefault();
     setError('');
-    setNotice('');
     setBusy(true);
 
     try {
@@ -124,13 +121,29 @@ export default function AdminProjectDetail() {
       setLogs((list) => [data.log, ...list]);
       setCost(data.project_cost);
       setLogForm({ hours: '', hourly_rate: logForm.hourly_rate, note: '' });
-      setNotice(
+      showToast(
         `Logged ${data.log.hours}h — ${formatMoney(data.log.cost)} deducted. Client balance: ${formatMoney(data.balance)}.`
       );
     } catch (err) {
       setError(err.message);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleDeleteLog(log) {
+    if (!window.confirm(`Delete time log (${Number(log.hours)}h on ${formatDate(log.logged_at)})? The amount returns to the client's balance.`)) {
+      return;
+    }
+
+    try {
+      const data = await apiPost('/costs/delete-log.php', { id: log.id });
+      setLogs((list) => list.filter((item) => item.id !== log.id));
+      setCost(data.project_cost);
+      showToast('Time log deleted — the amount returned to the client balance.');
+      setError('');
+    } catch (err) {
+      setError(err.message);
     }
   }
 
@@ -142,7 +155,7 @@ export default function AdminProjectDetail() {
     try {
       await apiPost('/projects/deliverable-delete.php', { id: d.id });
       setDeliverables((list) => list.filter((item) => item.id !== d.id));
-      setNotice('Deliverable deleted.');
+      showToast('Deliverable deleted.');
       setError('');
     } catch (err) {
       setError(err.message);
@@ -156,6 +169,7 @@ export default function AdminProjectDetail() {
 
     try {
       await apiPost(`/projects/delete.php?id=${id}`);
+      showToast('Project deleted.');
       navigate('/admin', { replace: true });
     } catch (err) {
       setError(err.message);
@@ -189,7 +203,6 @@ export default function AdminProjectDetail() {
       </div>
 
       {error && <div className="alert alert-danger py-2">{error}</div>}
-      {notice && <div className="alert alert-success py-2">{notice}</div>}
 
       <div className="row g-4">
         <div className="col-lg-7">
@@ -256,6 +269,7 @@ export default function AdminProjectDetail() {
                       <th>Note</th>
                       <th>Logged By</th>
                       <th>Date</th>
+                      <th className="text-end">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -267,6 +281,15 @@ export default function AdminProjectDetail() {
                         <td className="text-muted-light">{l.note || '—'}</td>
                         <td className="text-muted-light">{l.admin_name}</td>
                         <td className="text-muted-light">{formatDate(l.logged_at)}</td>
+                        <td className="text-end">
+                          <button
+                            type="button"
+                            className="btn btn-outline-danger btn-sm"
+                            onClick={() => handleDeleteLog(l)}
+                          >
+                            Delete
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

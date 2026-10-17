@@ -33,5 +33,15 @@ DATABASE/   SQL dump (adhubdb.sql)
 3. Open http://localhost:5173 — requests to `/api` are proxied to
    `http://localhost/Adhub/api` (see `frontend/vite.config.js`).
 
+## Demo data
+
+```
+powershell -ExecutionPolicy Bypass -File DATABASE\seed-demo.ps1
+```
+
+Imports three demo clients — `bloom@gmail.com`, `urbanfit@gmail.com`,
+`brewbean@gmail.com` (password: `demo1234`) — with projects across every
+stage, deliverables, retainers and time logs. Safe to re-run anytime.
+
 Admin account (seeded): `admin@gmail.com` / `ADMIN` — the API upgrades
 legacy plaintext passwords to bcrypt hashes on first login.

@@ -41,11 +41,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="d-flex gap-2">
-          <Link to="/admin/analytics" className="btn btn-outline-light btn-sm">Analytics</Link>
-          <Link to="/admin/costs" className="btn btn-outline-light btn-sm">Cost Tracking</Link>
-          <Link to="/admin/projects/new" className="btn btn-adhub btn-sm">+ New Project</Link>
-        </div>
+        <Link to="/admin/projects/new" className="btn btn-adhub btn-sm">+ New Project</Link>
       </div>
 
       {error && <div className="alert alert-danger py-2">{error}</div>}
