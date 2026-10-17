@@ -4,7 +4,6 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import ClientDashboard from './pages/ClientDashboard.jsx';
-import NewProject from './pages/NewProject.jsx';
 import AdminProjectDetail from './pages/AdminProjectDetail.jsx';
 import ClientProjectDetail from './pages/ClientProjectDetail.jsx';
 import CostsPage from './pages/CostsPage.jsx';
@@ -76,14 +75,6 @@ export default function App() {
         element={
           <RoleRoute role="admin">
             <AdminDashboard />
-          </RoleRoute>
-        }
-      />
-      <Route
-        path="/admin/projects/new"
-        element={
-          <RoleRoute role="admin">
-            <NewProject />
           </RoleRoute>
         }
       />

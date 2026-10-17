@@ -18,6 +18,9 @@ $reply  = trim($input['reply'] ?? '');
 if (!in_array($status, REQUEST_STATUSES, true)) {
     json_error('Invalid status.');
 }
+if ($status === 'accepted') {
+    json_error('Use "Accept — Create Project" to accept — that creates the campaign project.');
+}
 
 $stmt = db()->prepare('SELECT id FROM tbl_requests WHERE id = ? LIMIT 1');
 $stmt->execute([$id]);

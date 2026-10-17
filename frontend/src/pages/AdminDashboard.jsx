@@ -41,7 +41,9 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <Link to="/admin/projects/new" className="btn btn-adhub btn-sm">+ New Project</Link>
+        <Link to="/admin/requests" className="text-muted-light small text-decoration-none">
+          Projects are created by accepting client requests — review requests →
+        </Link>
       </div>
 
       {error && <div className="alert alert-danger py-2">{error}</div>}

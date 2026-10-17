@@ -282,12 +282,15 @@ CREATE TABLE `tbl_requests` (
   `title` varchar(255) NOT NULL,
   `message` text NOT NULL,
   `status` enum('open','accepted','done') NOT NULL DEFAULT 'open',
+  `project_id` int(11) DEFAULT NULL,
   `admin_reply` text DEFAULT NULL,
   `replied_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `client_id` (`client_id`),
-  CONSTRAINT `tbl_requests_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_users` (`id`) ON DELETE CASCADE
+  KEY `project_id` (`project_id`),
+  CONSTRAINT `tbl_requests_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `tbl_requests_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `tbl_projects` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

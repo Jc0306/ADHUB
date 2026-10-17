@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import DashboardShell from '../components/DashboardShell.jsx';
 import RequestStatusBadge from '../components/RequestStatusBadge.jsx';
 import { apiGet, apiPost } from '../api/client.js';
@@ -103,6 +104,14 @@ export default function RequestsPage() {
                       Agency reply · {formatDate(req.replied_at)}
                     </div>
                     <div style={{ whiteSpace: 'pre-wrap' }}>{req.admin_reply}</div>
+                  </div>
+                )}
+
+                {req.project_id && (
+                  <div className="mt-2">
+                    <Link to={`/client/projects/${req.project_id}`} className="link-light small">
+                      Project created: {req.project_title} →
+                    </Link>
                   </div>
                 )}
               </div>

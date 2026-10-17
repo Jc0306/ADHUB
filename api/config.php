@@ -168,13 +168,15 @@ function require_project_access(array $user, array $project): void
 
 /* ----------------------------------------------------------- Request helpers */
 
-/** Fetch one service request with its client's display fields, or null. */
+/** Fetch one service request with its client's and project's display fields, or null. */
 function find_request(int $id): ?array
 {
     $stmt = db()->prepare(
-        'SELECT r.*, u.full_name AS client_name, u.company_name AS client_company
+        'SELECT r.*, u.full_name AS client_name, u.company_name AS client_company,
+                p.title AS project_title, p.status AS project_status
          FROM tbl_requests r
          JOIN tbl_users u ON u.id = r.client_id
+         LEFT JOIN tbl_projects p ON p.id = r.project_id
          WHERE r.id = ? LIMIT 1'
     );
     $stmt->execute([$id]);
