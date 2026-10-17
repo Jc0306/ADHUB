@@ -96,6 +96,12 @@ export default function ChatPage() {
                 </button>
               ))}
             </div>
+
+            {!isAdmin && !threads.some((t) => t.project_id !== null) && (
+              <p className="small text-muted-light mt-3 mb-0">
+                Project chats appear here once the agency creates a campaign for you.
+              </p>
+            )}
           </div>
 
           <div className="col-lg-8">
