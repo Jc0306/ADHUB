@@ -28,7 +28,7 @@ export default function ProjectsTable({ projects, detailBase, showClient = false
             <tr key={p.id}>
               <td className="fw-bold">{p.title}</td>
               {showClient && <td>{p.client_company || p.client_name}</td>}
-              <td className="text-muted-light">{p.service_type}</td>
+              <td className="text-muted-light">{p.service_type || '—'}</td>
               <td className="text-end">{formatMoney(p.budget)}</td>
               <td className="text-end">{p.progress_percent}%</td>
               <td><StatusBadge status={p.status} /></td>

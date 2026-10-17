@@ -23,9 +23,6 @@ $progress    = (int) ($input['progress_percent'] ?? 0);
 if ($title === '') {
     json_error('Project title is required.');
 }
-if ($serviceType === '') {
-    json_error('Service type is required.');
-}
 if (!is_numeric($budget) || (float) $budget < 0) {
     json_error('Budget must be a non-negative number.');
 }

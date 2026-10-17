@@ -5,24 +5,17 @@ import RequestStatusBadge from '../components/RequestStatusBadge.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
 import { apiGet, apiPost } from '../api/client.js';
 import { showToast } from '../toast.js';
-import {
-  REQUEST_STATUSES,
-  REQUEST_STATUS_LABELS,
-  SERVICE_TYPES,
-  formatDate,
-} from '../constants.js';
+import { REQUEST_STATUSES, REQUEST_STATUS_LABELS, formatDate } from '../constants.js';
 
 /** Admin area — incoming service requests: reply, and accept to create the project. */
 export default function AdminRequestsPage() {
   const [requests, setRequests] = useState([]);
   const [drafts, setDrafts] = useState({});
   const [filter, setFilter] = useState('all');
-  const [acceptFor, setAcceptFor] = useState(null);
-  const [acceptForm, setAcceptForm] = useState({ title: '', service_type: SERVICE_TYPES[0], budget: '', reply: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
-  const [accepting, setAccepting] = useState(false);
+  const [accepting, setAccepting] = useState(null); // request id while its project is being created
 
   useEffect(() => {
     apiGet('/requests/list.php')
@@ -51,34 +44,18 @@ export default function AdminRequestsPage() {
       setDrafts((d) => ({ ...d, [id]: { ...d[id], [field]: e.target.value } }));
   }
 
-  function setAccept(field) {
-    return (e) => setAcceptForm((f) => ({ ...f, [field]: e.target.value }));
-  }
-
-  function startAccept(req) {
-    setAcceptFor(req.id);
-    setAcceptForm({ title: req.title, service_type: SERVICE_TYPES[0], budget: '', reply: '' });
-  }
-
   async function handleAccept(req) {
     setError('');
-    setAccepting(true);
+    setAccepting(req.id);
 
     try {
-      const data = await apiPost('/requests/accept.php', {
-        id: req.id,
-        title: acceptForm.title,
-        service_type: acceptForm.service_type,
-        budget: Number(acceptForm.budget),
-        reply: acceptForm.reply,
-      });
+      const data = await apiPost('/requests/accept.php', { id: req.id });
       syncRequest(data.request);
-      setAcceptFor(null);
       showToast(`Project "${data.project.title}" created — it is In Progress on your dashboard.`);
     } catch (err) {
       setError(err.message);
     } finally {
-      setAccepting(false);
+      setAccepting(null);
     }
   }
 
@@ -162,92 +139,21 @@ export default function AdminRequestsPage() {
             )}
 
             {req.status !== 'done' && !req.project_id && (
-              acceptFor === req.id ? (
-                <div className="border-start border-3 border-success ps-3 mb-3">
-                  <div className="fw-semibold mb-2">Create the project</div>
-                  <div className="row g-2">
-                    <div className="col-md-6">
-                      <label className="form-label small text-muted-light" htmlFor={`acc-title-${req.id}`}>
-                        Project Title
-                      </label>
-                      <input
-                        id={`acc-title-${req.id}`}
-                        className="form-control"
-                        value={acceptForm.title}
-                        onChange={setAccept('title')}
-                        required
-                      />
-                    </div>
-                    <div className="col-md-3">
-                      <label className="form-label small text-muted-light" htmlFor={`acc-service-${req.id}`}>
-                        Service Type
-                      </label>
-                      <select
-                        id={`acc-service-${req.id}`}
-                        className="form-select"
-                        value={acceptForm.service_type}
-                        onChange={setAccept('service_type')}
-                      >
-                        {SERVICE_TYPES.map((s) => <option key={s}>{s}</option>)}
-                      </select>
-                    </div>
-                    <div className="col-md-3">
-                      <label className="form-label small text-muted-light" htmlFor={`acc-budget-${req.id}`}>
-                        Budget ($)
-                      </label>
-                      <input
-                        id={`acc-budget-${req.id}`}
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        className="form-control"
-                        placeholder="e.g. 300"
-                        value={acceptForm.budget}
-                        onChange={setAccept('budget')}
-                        required
-                      />
-                    </div>
-                    <div className="col-12">
-                      <label className="form-label small text-muted-light" htmlFor={`acc-reply-${req.id}`}>
-                        Note to client (optional)
-                      </label>
-                      <textarea
-                        id={`acc-reply-${req.id}`}
-                        className="form-control"
-                        rows="2"
-                        placeholder="e.g. Great idea — we've scheduled it. First concepts next week."
-                        value={acceptForm.reply}
-                        onChange={setAccept('reply')}
-                      />
-                    </div>
-                  </div>
-                  <div className="d-flex gap-2 mt-2">
-                    <button
-                      type="button"
-                      className="btn btn-adhub btn-sm"
-                      disabled={accepting || !acceptForm.title.trim() || acceptForm.budget === ''}
-                      onClick={() => handleAccept(req)}
-                    >
-                      {accepting ? 'Creating…' : 'Create Project (In Progress)'}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-outline-light btn-sm"
-                      onClick={() => setAcceptFor(null)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
+              <div className="mb-3">
                 <button
                   type="button"
-                  className="btn btn-adhub btn-sm mb-3"
-                  onClick={() => startAccept(req)}
+                  className="btn btn-adhub btn-sm"
+                  disabled={accepting === req.id}
+                  onClick={() => handleAccept(req)}
                 >
-                  Accept — Create Project
+                  {accepting === req.id ? 'Creating…' : 'Accept — Create Project'}
                 </button>
-              )
+                <p className="small text-muted-light mt-2 mb-0">
+                  Creates the project right away (In Progress) from this request&apos;s title and
+                  message — set the budget and details inside it, chat with the client, and upload
+                  what they asked for.
+                </p>
+              </div>
             )}
 
             <div className="row g-2 align-items-end">

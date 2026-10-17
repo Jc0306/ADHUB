@@ -220,6 +220,7 @@ export default function AdminProjectDetail() {
                 <div className="col-md-4 mb-3">
                   <label className="form-label" htmlFor="service_type">Service Type</label>
                   <select id="service_type" className="form-select" value={edit.service_type} onChange={set('service_type')}>
+                    <option value="">— Not set —</option>
                     {SERVICE_TYPES.map((s) => <option key={s}>{s}</option>)}
                   </select>
                 </div>

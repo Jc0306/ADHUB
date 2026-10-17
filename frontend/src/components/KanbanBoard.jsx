@@ -35,7 +35,7 @@ export default function KanbanBoard({ projects, detailBase }) {
                   <div className={`kanban-accent bg-${ACCENT[status]} mb-2`} />
                   <div className="fw-bold text-white">{p.title}</div>
                   <div className="small text-muted-light">{p.client_company || p.client_name}</div>
-                  <div className="small text-muted-light">{p.service_type}</div>
+                  <div className="small text-muted-light">{p.service_type || '—'}</div>
                   <div className="d-flex justify-content-between small mt-2">
                     <span className="text-muted-light">{formatMoney(p.budget)}</span>
                     <span className="text-muted-light">{p.progress_percent}%</span>

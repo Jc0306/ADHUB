@@ -69,7 +69,7 @@ export default function ClientProjectDetail() {
 
             <div className="d-flex justify-content-between mb-2">
               <span className="text-muted-light">Service</span>
-              <span>{project.service_type}</span>
+              <span>{project.service_type || '—'}</span>
             </div>
             <div className="d-flex justify-content-between mb-2">
               <span className="text-muted-light">Budget</span>

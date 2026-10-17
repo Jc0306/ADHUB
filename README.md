@@ -17,7 +17,7 @@ DATABASE/   adhubdb.sql (schema + admin), seed-demo.* (optional demo data)
 - **Multi-role authentication** — agency (admin) and client views, role-guarded routes and endpoints
 - **Campaign asset management** — projects per client (created by accepting a request), versioned deliverable uploads
 - **Milestone approval workflow** — clients Approve / Request Revision; project stages move automatically; Kanban board (Bootstrap grid, desktop)
-- **Client service requests** — clients ask for new work; the agency replies, and **accepting a request creates its campaign project (In Progress)** — projects can only start from a client request (navbar shows the open count)
+- **Client service requests** — clients ask for new work; the agency replies, and **accepting a request opens its campaign project (In Progress)** from the request's title and message — budget, details and deliverables are handled inside the project. Projects start only from a client request (navbar shows the open count)
 - **Chat** — a General thread per client plus a separate thread for every campaign project (also embedded on the project page); unread badges in the navbar and per thread, messages poll in every ~3 seconds while a chat is open
 - **Automated cost tracking** — client retainers (top-ups), logged hours x rate; balance is computed so deductions are always in sync
 - **Printable campaign reports** — milestones + remaining budget, via the Print Report button on any project

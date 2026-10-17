@@ -77,7 +77,7 @@ export default function ProjectReport() {
             </tr>
             <tr>
               <th>Service</th>
-              <td>{project.service_type}</td>
+              <td>{project.service_type || '—'}</td>
               <th>Status</th>
               <td><StatusBadge status={project.status} /></td>
             </tr>
