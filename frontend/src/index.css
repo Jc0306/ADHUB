@@ -1,0 +1,201 @@
+/* AdHub theme — matches the branding of the legacy pages. */
+
+:root {
+  --adhub-bg-deep: #0a121d;
+  --adhub-bg-top: #132238;
+  --adhub-accent: #1b3252;
+  --adhub-accent-hover: #23406a;
+  --adhub-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at top center, var(--adhub-bg-top) 0%, var(--adhub-bg-deep) 100%);
+  background-attachment: fixed;
+  color: #fff;
+  min-height: 100vh;
+}
+
+.adhub-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--adhub-border);
+  border-radius: 12px;
+}
+
+.btn-adhub {
+  background-color: var(--adhub-accent);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 50px;
+  padding: 10px 30px;
+  font-weight: 600;
+}
+
+.btn-adhub:hover,
+.btn-adhub:focus {
+  background-color: var(--adhub-accent-hover);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-adhub:disabled {
+  background-color: var(--adhub-accent);
+  color: #fff;
+  opacity: 0.6;
+}
+
+.btn-adhub.btn-sm {
+  padding: 6px 20px;
+}
+
+.form-control,
+.form-control:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--adhub-border);
+  color: #fff;
+}
+
+.form-control:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--adhub-accent);
+  box-shadow: none;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.form-select,
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--adhub-border);
+  color: #fff;
+}
+
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--adhub-accent);
+  box-shadow: none;
+}
+
+.form-select option {
+  background-color: var(--adhub-bg-top);
+  color: #fff;
+}
+
+.adhub-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.adhub-table th {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--adhub-border);
+  padding: 0.75rem 1rem;
+}
+
+.adhub-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+}
+
+.adhub-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.progress {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.kanban-row {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.kanban-col {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--adhub-border);
+  border-radius: 12px;
+  padding: 0.75rem;
+  min-height: 200px;
+}
+
+.kanban-card {
+  transition: transform 0.2s ease;
+}
+
+.kanban-card:hover {
+  transform: translateY(-3px);
+}
+
+.kanban-accent {
+  height: 3px;
+  width: 40px;
+  border-radius: 2px;
+}
+
+.kanban-empty {
+  border: 1px dashed var(--adhub-border);
+  border-radius: 8px;
+}
+
+/* ---- Printable campaign report ---- */
+
+.report-sheet {
+  background: #fff;
+  color: #212529;
+  border-radius: 12px;
+  padding: 2.5rem;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.report-table th,
+.report-table td {
+  border-bottom: 1px solid #dee2e6;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.report-table thead th {
+  background: #f8f9fa;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #495057;
+}
+
+@media print {
+  body {
+    background: #fff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .report-sheet {
+    border-radius: 0;
+    max-width: none;
+    padding: 0;
+  }
+}
+
+.adhub-navbar {
+  background-color: var(--adhub-bg-top);
+  border-bottom: 1px solid var(--adhub-border);
+}
+
+.text-muted-light {
+  color: rgba(255, 255, 255, 0.6) !important;
+}

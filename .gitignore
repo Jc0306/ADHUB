@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build output
+frontend/dist/
+
+# Uploaded deliverable files
+uploads/
+
+# Logs
+*.log

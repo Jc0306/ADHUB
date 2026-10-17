@@ -33,6 +33,9 @@ CREATE TABLE `tbl_deliverables` (
   `file_path` text NOT NULL,
   `display_name` varchar(255) NOT NULL,
   `version` int(11) DEFAULT 1,
+  `approval_status` enum('pending','approved','revision') NOT NULL DEFAULT 'pending',
+  `review_note` text DEFAULT NULL,
+  `reviewed_at` timestamp NULL DEFAULT NULL,
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -243,6 +246,45 @@ ALTER TABLE `tbl_payments`
 --
 ALTER TABLE `tbl_projects`
   ADD CONSTRAINT `tbl_projects_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_users` (`id`) ON DELETE CASCADE;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_retainers`
+--
+
+CREATE TABLE `tbl_retainers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `client_id` (`client_id`),
+  CONSTRAINT `tbl_retainers_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_time_logs`
+--
+
+CREATE TABLE `tbl_time_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `hours` decimal(6,2) NOT NULL,
+  `hourly_rate` decimal(10,2) NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `logged_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `project_id` (`project_id`),
+  KEY `admin_id` (`admin_id`),
+  CONSTRAINT `tbl_time_logs_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `tbl_projects` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `tbl_time_logs_ibfk_2` FOREIGN KEY (`admin_id`) REFERENCES `tbl_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
