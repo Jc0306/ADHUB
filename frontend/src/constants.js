@@ -12,6 +12,14 @@ export const STATUS_LABELS = {
 
 export const SERVICE_TYPES = ['Graphic Design', 'Logo Design', 'Slogan', 'Poster'];
 
+export const REQUEST_STATUSES = ['open', 'accepted', 'done'];
+
+export const REQUEST_STATUS_LABELS = {
+  open: 'Open',
+  accepted: 'Accepted',
+  done: 'Done',
+};
+
 export const APPROVAL_LABELS = {
   pending: 'Awaiting Review',
   approved: 'Approved',

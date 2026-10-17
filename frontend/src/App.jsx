@@ -10,6 +10,9 @@ import ClientProjectDetail from './pages/ClientProjectDetail.jsx';
 import CostsPage from './pages/CostsPage.jsx';
 import ProjectReport from './pages/ProjectReport.jsx';
 import AnalyticsPage from './pages/AnalyticsPage.jsx';
+import RequestsPage from './pages/RequestsPage.jsx';
+import AdminRequestsPage from './pages/AdminRequestsPage.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import ToastHost from './components/ToastHost.jsx';
 
 /** Landing route for the user's role. */
@@ -62,6 +65,7 @@ export default function App() {
   return (
     <>
       <ToastHost />
+      <ErrorBoundary>
       <Routes>
       <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<Login />} />
@@ -107,6 +111,14 @@ export default function App() {
         }
       />
       <Route
+        path="/admin/requests"
+        element={
+          <RoleRoute role="admin">
+            <AdminRequestsPage />
+          </RoleRoute>
+        }
+      />
+      <Route
         path="/reports/project/:id"
         element={
           <AuthRoute>
@@ -130,8 +142,17 @@ export default function App() {
           </RoleRoute>
         }
       />
+      <Route
+        path="/client/requests"
+        element={
+          <RoleRoute role="client">
+            <RequestsPage />
+          </RoleRoute>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </ErrorBoundary>
     </>
   );
 }

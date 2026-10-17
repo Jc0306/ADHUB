@@ -1,20 +1,38 @@
+import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { apiGet } from '../api/client.js';
 
 const ADMIN_LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
+  { to: '/admin/requests', label: 'Requests', badge: 'openRequests' },
   { to: '/admin/costs', label: 'Cost Tracking' },
   { to: '/admin/analytics', label: 'Analytics' },
 ];
 
-const CLIENT_LINKS = [{ to: '/client', label: 'Dashboard', end: true }];
+const CLIENT_LINKS = [
+  { to: '/client', label: 'Dashboard', end: true },
+  { to: '/client/requests', label: 'Service Requests' },
+];
 
 /** Shared chrome (navbar + page title) for the admin and client areas. */
 export default function DashboardShell({ subtitle, children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [openRequests, setOpenRequests] = useState(0);
 
   const links = user?.role === 'admin' ? ADMIN_LINKS : CLIENT_LINKS;
+
+  // Badge for admins: how many service requests are still open.
+  useEffect(() => {
+    if (user?.role !== 'admin') {
+      return;
+    }
+
+    apiGet('/requests/list.php')
+      .then((d) => setOpenRequests(d.requests.filter((r) => r.status === 'open').length))
+      .catch(() => {});
+  }, [user]);
 
   async function handleLogout() {
     await logout();
@@ -38,6 +56,9 @@ export default function DashboardShell({ subtitle, children }) {
               className={({ isActive }) => `adhub-nav-link${isActive ? ' active' : ''}`}
             >
               {link.label}
+              {link.badge === 'openRequests' && openRequests > 0 && (
+                <span className="badge text-bg-warning ms-1">{openRequests}</span>
+              )}
             </NavLink>
           ))}
         </div>

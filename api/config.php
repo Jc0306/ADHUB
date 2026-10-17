@@ -141,6 +141,9 @@ function public_user(array $row): array
 /** Same set as tbl_projects.status (see DATABASE/adhubdb.sql). */
 const PROJECT_STATUSES = ['pending', 'in-progress', 'revision', 'completed', 'rejected'];
 
+/** Same set as tbl_requests.status (see DATABASE/adhubdb.sql). */
+const REQUEST_STATUSES = ['open', 'accepted', 'done'];
+
 /** Fetch one project with its client's display fields, or null. */
 function find_project(int $id): ?array
 {
@@ -161,4 +164,20 @@ function require_project_access(array $user, array $project): void
     if ($user['role'] !== 'admin' && (int) $project['client_id'] !== $user['id']) {
         json_error('You do not have access to this project.', 403);
     }
+}
+
+/* ----------------------------------------------------------- Request helpers */
+
+/** Fetch one service request with its client's display fields, or null. */
+function find_request(int $id): ?array
+{
+    $stmt = db()->prepare(
+        'SELECT r.*, u.full_name AS client_name, u.company_name AS client_company
+         FROM tbl_requests r
+         JOIN tbl_users u ON u.id = r.client_id
+         WHERE r.id = ? LIMIT 1'
+    );
+    $stmt->execute([$id]);
+
+    return $stmt->fetch() ?: null;
 }

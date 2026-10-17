@@ -85,3 +85,9 @@ INSERT INTO tbl_time_logs (project_id, admin_id, hours, hourly_rate, note, logge
 (@p_grand, @admin, 8.00, 35.00, 'Signage and layout adaptations', NOW() - INTERVAL 38 DAY),
 (@p_tagline, @admin, 3.00, 35.00, 'Tagline ideation rounds', NOW() - INTERVAL 36 DAY),
 (@p_contest, @admin, 2.50, 35.00, 'Contest key visual draft', NOW() - INTERVAL 12 DAY);
+
+-- --------------------------------------------------------- Service requests --
+INSERT INTO tbl_requests (client_id, title, message, status, admin_reply, replied_at, created_at) VALUES
+(@urbanfit, 'Spring promo video', 'We want a short promo video for the spring membership drive. Can you take this on?', 'open', NULL, NULL, NOW() - INTERVAL 2 DAY),
+(@bloom, 'Loyalty card redesign', 'The loyalty card feels outdated — can you redesign it to match the new packaging?', 'accepted', 'Great timing — first concepts will be with you early next week.', NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 4 DAY),
+(@brewbean, 'Menu board refresh', 'Please refresh the in-store menu board with the new latte line.', 'done', 'Menu board delivered — enjoy the new look!', NOW() - INTERVAL 6 DAY, NOW() - INTERVAL 9 DAY);
