@@ -6,8 +6,9 @@ import { formatDate } from '../constants.js';
 const POLL_MS = 3000;
 
 /**
- * Project chat conversation view with ~3s polling. Parents should pass a
- * `key` per project so switching threads remounts fresh state.
+ * Project chat conversation view with ~3s polling — every thread belongs to
+ * a project. Parents pass a `key` per project so switching threads remounts
+ * fresh state.
  */
 export default function ChatThread({ projectId }) {
   const { user } = useAuth();
