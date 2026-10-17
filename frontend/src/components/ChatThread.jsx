@@ -6,11 +6,12 @@ import { formatDate } from '../constants.js';
 const POLL_MS = 3000;
 
 /**
- * Chat conversation view with ~3s polling. Admins pass the selected
- * clientId; clients omit it (their own thread is implied). Parents should
- * pass a `key` per thread so switching threads remounts fresh state.
+ * Chat conversation view with ~3s polling. Admins pass clientId + an
+ * optional projectId (project thread); omit both for the client's own
+ * General thread. Parents should pass a `key` per thread so switching
+ * threads remounts fresh state.
  */
-export default function ChatThread({ clientId = null }) {
+export default function ChatThread({ clientId = null, projectId = null }) {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState('');
@@ -29,6 +30,9 @@ export default function ChatThread({ clientId = null }) {
       const params = new URLSearchParams();
       if (clientId != null) {
         params.set('client_id', clientId);
+      }
+      if (projectId != null) {
+        params.set('project_id', projectId);
       }
       if (afterId > 0) {
         params.set('after_id', afterId);
@@ -64,7 +68,7 @@ export default function ChatThread({ clientId = null }) {
       cancelled = true;
       clearInterval(timer);
     };
-  }, [clientId]);
+  }, [clientId, projectId]);
 
   // Keep the newest message in view (instant on thread switch, smooth after).
   useEffect(() => {
@@ -89,6 +93,9 @@ export default function ChatThread({ clientId = null }) {
       const payload = { body };
       if (clientId != null) {
         payload.client_id = clientId;
+      }
+      if (projectId != null) {
+        payload.project_id = projectId;
       }
 
       const data = await apiPost('/chat/send.php', payload);

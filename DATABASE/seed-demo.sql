@@ -93,6 +93,7 @@ INSERT INTO tbl_requests (client_id, title, message, status, admin_reply, replie
 (@brewbean, 'Menu board refresh', 'Please refresh the in-store menu board with the new latte line.', 'done', 'Menu board delivered — enjoy the new look!', NOW() - INTERVAL 6 DAY, NOW() - INTERVAL 9 DAY);
 
 -- ------------------------------------------------------------- Chat samples --
+-- General threads (project_id NULL) …
 INSERT INTO tbl_chat_messages (client_id, sender_id, body, created_at, read_at) VALUES
 (@bloom, @bloom, 'Hi! Quick question about the loyalty card redesign — is a QR code on the back still on the table?', NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY),
 (@bloom, @admin, 'Definitely — we will include room for a QR code on the back.', NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 2 DAY),
@@ -101,3 +102,10 @@ INSERT INTO tbl_chat_messages (client_id, sender_id, body, created_at, read_at) 
 (@urbanfit, @admin, 'Yes — we booked it in. First cut should reach you in about two weeks.', NOW() - INTERVAL 1 DAY, NULL),
 (@brewbean, @brewbean, 'The menu board looks fantastic — thank you!', NOW() - INTERVAL 8 DAY, NOW() - INTERVAL 8 DAY),
 (@brewbean, @admin, 'Glad you like it — enjoy the new latte line!', NOW() - INTERVAL 8 DAY, NOW() - INTERVAL 7 DAY);
+
+-- … and project threads.
+INSERT INTO tbl_chat_messages (client_id, project_id, sender_id, body, created_at, read_at) VALUES
+(@bloom, @p_summer, @admin, 'Hero banner v2 is uploaded — let us know what you think!', NOW() - INTERVAL 6 DAY, NOW() - INTERVAL 6 DAY),
+(@bloom, @p_summer, @bloom, 'Looks great! Could the headline be a touch lighter for the summer feel?', NOW() - INTERVAL 5 DAY, NULL),
+(@urbanfit, @p_newyear, @admin, 'Promo poster v2 is up — bolder headline and the logo has been repositioned.', NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 3 DAY),
+(@urbanfit, @p_newyear, @urbanfit, 'Nice — checking it with the team tomorrow.', NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY);

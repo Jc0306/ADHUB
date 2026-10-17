@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import DashboardShell from '../components/DashboardShell.jsx';
 import DeliverablesTable from '../components/DeliverablesTable.jsx';
 import StatusBadge from '../components/StatusBadge.jsx';
+import ChatThread from '../components/ChatThread.jsx';
 import { apiGet, apiPost } from '../api/client.js';
 import { showToast } from '../toast.js';
 import { formatDate, formatMoney } from '../constants.js';
@@ -109,6 +110,11 @@ export default function ClientProjectDetail() {
               onApprove={(d) => handleReview(d, 'approve', '')}
               onRevision={(d, note) => handleReview(d, 'revision', note)}
             />
+          </div>
+
+          <div className="adhub-card p-4 mt-4">
+            <h2 className="h5 mb-3">Project Chat</h2>
+            <ChatThread key={project.id} projectId={project.id} />
           </div>
         </div>
       </div>

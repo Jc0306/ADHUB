@@ -2,8 +2,9 @@
 /**
  * POST /api/chat/send.php — post a chat message.
  *
- * Body: { body, client_id? }  — client_id is required for admins (which
- * client's thread), ignored for clients (their own thread).
+ * Body: { body, client_id?, project_id? } — client_id is required for admins
+ * (which client), ignored for clients (their own threads). project_id picks a
+ * project thread; omit it for the client's General chat.
  */
 
 require_once __DIR__ . '/../config.php';
@@ -33,7 +34,13 @@ if ($user['role'] === 'admin') {
     $clientId = $user['id'];
 }
 
-$stmt = db()->prepare('INSERT INTO tbl_chat_messages (client_id, sender_id, body) VALUES (?, ?, ?)');
-$stmt->execute([$clientId, $user['id'], $body]);
+$projectId = (int) ($input['project_id'] ?? 0);
+
+if ($projectId > 0) {
+    require_chat_project($projectId, $clientId);
+}
+
+$stmt = db()->prepare('INSERT INTO tbl_chat_messages (client_id, project_id, sender_id, body) VALUES (?, ?, ?, ?)');
+$stmt->execute([$clientId, $projectId > 0 ? $projectId : null, $user['id'], $body]);
 
 json_response(['message' => find_chat_message((int) db()->lastInsertId())], 201);

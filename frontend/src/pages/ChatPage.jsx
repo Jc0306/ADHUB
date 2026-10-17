@@ -2,14 +2,22 @@ import { useEffect, useState } from 'react';
 import DashboardShell from '../components/DashboardShell.jsx';
 import ChatThread from '../components/ChatThread.jsx';
 import { apiGet } from '../api/client.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import { formatDate } from '../constants.js';
 
 const POLL_MS = 5000;
 
-/** Admin area — all client conversations, one thread at a time. */
-export default function AdminChatPage() {
+const threadKey = (t) => `${t.client_id}:${t.project_id ?? 'general'}`;
+const threadLabel = (t) => (t.project_id === null ? 'General' : t.project_title);
+
+/**
+ * Shared chat page (both roles) — thread list on the left (each client's
+ * General chat plus one thread per project), conversation on the right.
+ */
+export default function ChatPage() {
+  const { user } = useAuth();
   const [threads, setThreads] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedKey, setSelectedKey] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +30,7 @@ export default function AdminChatPage() {
         return;
       }
       setThreads(data.threads);
-      setSelectedId((cur) => (cur != null ? cur : data.threads[0]?.client_id ?? null));
+      setSelectedKey((cur) => cur ?? (data.threads[0] ? threadKey(data.threads[0]) : null));
     }
 
     load()
@@ -42,14 +50,19 @@ export default function AdminChatPage() {
   }, []);
 
   function selectThread(t) {
-    setSelectedId(t.client_id);
+    setSelectedKey(threadKey(t));
     // Optimistically clear the unread badge — the thread fetch marks it read.
     setThreads((list) =>
-      list.map((item) => (item.client_id === t.client_id ? { ...item, unread: 0 } : item))
+      list.map((item) => (threadKey(item) === threadKey(t) ? { ...item, unread: 0 } : item))
     );
   }
 
-  const selected = threads.find((t) => t.client_id === selectedId) ?? null;
+  const isAdmin = user?.role === 'admin';
+  // Fall back to the first thread if the selected one no longer exists.
+  const effectiveKey = threads.some((t) => threadKey(t) === selectedKey)
+    ? selectedKey
+    : (threads[0] ? threadKey(threads[0]) : null);
+  const selected = threads.find((t) => threadKey(t) === effectiveKey) ?? null;
 
   return (
     <DashboardShell subtitle="Chat">
@@ -58,26 +71,26 @@ export default function AdminChatPage() {
       {loading ? (
         <p className="text-muted-light">Loading…</p>
       ) : threads.length === 0 ? (
-        <div className="adhub-card p-4 text-muted-light">
-          No client accounts yet — chat starts once a client registers.
-        </div>
+        <div className="adhub-card p-4 text-muted-light">Nothing to chat about yet.</div>
       ) : (
         <div className="row g-4">
           <div className="col-lg-4">
             <div className="d-flex flex-column gap-2">
               {threads.map((t) => (
                 <button
-                  key={t.client_id}
+                  key={threadKey(t)}
                   type="button"
-                  className={`chat-thread-btn${t.client_id === selectedId ? ' active' : ''}`}
+                  className={`chat-thread-btn${threadKey(t) === effectiveKey ? ' active' : ''}`}
                   onClick={() => selectThread(t)}
                 >
                   <div className="d-flex justify-content-between align-items-center gap-2">
-                    <span className="fw-semibold">{t.company_name || t.full_name}</span>
+                    <span className="fw-semibold">
+                      {isAdmin ? t.company_name || t.full_name : threadLabel(t)}
+                    </span>
                     {t.unread > 0 && <span className="badge text-bg-warning">{t.unread}</span>}
                   </div>
                   <div className="small text-muted-light">
-                    {t.company_name ? `${t.full_name} · ` : ''}
+                    {isAdmin ? `${threadLabel(t)} · ` : ''}
                     {t.last_message_at ? formatDate(t.last_message_at) : 'No messages yet'}
                   </div>
                 </button>
@@ -89,11 +102,15 @@ export default function AdminChatPage() {
             {selected && (
               <div className="adhub-card p-3">
                 <div className="fw-bold mb-2">
-                  {selected.company_name
-                    ? `${selected.company_name} — ${selected.full_name}`
-                    : selected.full_name}
+                  {isAdmin
+                    ? `${selected.company_name || selected.full_name} — ${threadLabel(selected)}`
+                    : `ADHUB Team · ${threadLabel(selected)}`}
                 </div>
-                <ChatThread key={selected.client_id} clientId={selected.client_id} />
+                <ChatThread
+                  key={effectiveKey}
+                  clientId={selected.client_id}
+                  projectId={selected.project_id}
+                />
               </div>
             )}
           </div>
