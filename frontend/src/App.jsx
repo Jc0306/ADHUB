@@ -12,6 +12,8 @@ import ProjectReport from './pages/ProjectReport.jsx';
 import AnalyticsPage from './pages/AnalyticsPage.jsx';
 import RequestsPage from './pages/RequestsPage.jsx';
 import AdminRequestsPage from './pages/AdminRequestsPage.jsx';
+import AdminChatPage from './pages/AdminChatPage.jsx';
+import ClientChatPage from './pages/ClientChatPage.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import ToastHost from './components/ToastHost.jsx';
 
@@ -119,6 +121,14 @@ export default function App() {
         }
       />
       <Route
+        path="/admin/chat"
+        element={
+          <RoleRoute role="admin">
+            <AdminChatPage />
+          </RoleRoute>
+        }
+      />
+      <Route
         path="/reports/project/:id"
         element={
           <AuthRoute>
@@ -147,6 +157,14 @@ export default function App() {
         element={
           <RoleRoute role="client">
             <RequestsPage />
+          </RoleRoute>
+        }
+      />
+      <Route
+        path="/client/chat"
+        element={
+          <RoleRoute role="client">
+            <ClientChatPage />
           </RoleRoute>
         }
       />

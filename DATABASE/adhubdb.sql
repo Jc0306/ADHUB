@@ -250,6 +250,26 @@ ALTER TABLE `tbl_projects`
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tbl_chat_messages`
+--
+
+CREATE TABLE `tbl_chat_messages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `client_id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `body` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `read_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `client_id` (`client_id`),
+  KEY `sender_id` (`sender_id`),
+  CONSTRAINT `tbl_chat_messages_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `tbl_users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `tbl_chat_messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `tbl_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tbl_requests`
 --
 

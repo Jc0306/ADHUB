@@ -91,3 +91,13 @@ INSERT INTO tbl_requests (client_id, title, message, status, admin_reply, replie
 (@urbanfit, 'Spring promo video', 'We want a short promo video for the spring membership drive. Can you take this on?', 'open', NULL, NULL, NOW() - INTERVAL 2 DAY),
 (@bloom, 'Loyalty card redesign', 'The loyalty card feels outdated — can you redesign it to match the new packaging?', 'accepted', 'Great timing — first concepts will be with you early next week.', NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 4 DAY),
 (@brewbean, 'Menu board refresh', 'Please refresh the in-store menu board with the new latte line.', 'done', 'Menu board delivered — enjoy the new look!', NOW() - INTERVAL 6 DAY, NOW() - INTERVAL 9 DAY);
+
+-- ------------------------------------------------------------- Chat samples --
+INSERT INTO tbl_chat_messages (client_id, sender_id, body, created_at, read_at) VALUES
+(@bloom, @bloom, 'Hi! Quick question about the loyalty card redesign — is a QR code on the back still on the table?', NOW() - INTERVAL 3 DAY, NOW() - INTERVAL 2 DAY),
+(@bloom, @admin, 'Definitely — we will include room for a QR code on the back.', NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 2 DAY),
+(@bloom, @bloom, 'Perfect. When can we expect the first concepts?', NOW() - INTERVAL 4 HOUR, NULL),
+(@urbanfit, @urbanfit, 'The promo video request — can it be ready before the spring drive starts?', NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 2 DAY),
+(@urbanfit, @admin, 'Yes — we booked it in. First cut should reach you in about two weeks.', NOW() - INTERVAL 1 DAY, NULL),
+(@brewbean, @brewbean, 'The menu board looks fantastic — thank you!', NOW() - INTERVAL 8 DAY, NOW() - INTERVAL 8 DAY),
+(@brewbean, @admin, 'Glad you like it — enjoy the new latte line!', NOW() - INTERVAL 8 DAY, NOW() - INTERVAL 7 DAY);

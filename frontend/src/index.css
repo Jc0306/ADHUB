@@ -216,3 +216,61 @@ body {
 .text-muted-light {
   color: rgba(255, 255, 255, 0.6) !important;
 }
+
+/* ---- Chat ---- */
+
+.chat-window {
+  height: 460px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-right: 0.25rem;
+}
+
+.chat-bubble {
+  max-width: 72%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--adhub-border);
+  border-radius: 12px 12px 12px 4px;
+  padding: 0.5rem 0.85rem;
+}
+
+.chat-bubble-mine {
+  background: var(--adhub-accent);
+  border-color: rgba(255, 255, 255, 0.18);
+  border-radius: 12px 12px 4px 12px;
+}
+
+.chat-body {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chat-meta {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+.chat-bubble-mine .chat-meta {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.chat-thread-btn {
+  width: 100%;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--adhub-border);
+  border-radius: 10px;
+  color: #fff;
+  padding: 0.65rem 0.85rem;
+}
+
+.chat-thread-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chat-thread-btn.active {
+  background: rgba(27, 50, 82, 0.6);
+  border-color: var(--adhub-accent-hover);
+}

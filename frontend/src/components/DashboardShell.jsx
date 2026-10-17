@@ -6,6 +6,7 @@ import { apiGet } from '../api/client.js';
 const ADMIN_LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
   { to: '/admin/requests', label: 'Requests', badge: 'openRequests' },
+  { to: '/admin/chat', label: 'Chat', badge: 'unreadChats' },
   { to: '/admin/costs', label: 'Cost Tracking' },
   { to: '/admin/analytics', label: 'Analytics' },
 ];
@@ -13,6 +14,7 @@ const ADMIN_LINKS = [
 const CLIENT_LINKS = [
   { to: '/client', label: 'Dashboard', end: true },
   { to: '/client/requests', label: 'Service Requests' },
+  { to: '/client/chat', label: 'Chat', badge: 'unreadChats' },
 ];
 
 /** Shared chrome (navbar + page title) for the admin and client areas. */
@@ -20,17 +22,25 @@ export default function DashboardShell({ subtitle, children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [openRequests, setOpenRequests] = useState(0);
+  const [unreadChats, setUnreadChats] = useState(0);
 
   const links = user?.role === 'admin' ? ADMIN_LINKS : CLIENT_LINKS;
+  const badges = { openRequests, unreadChats };
 
-  // Badge for admins: how many service requests are still open.
+  // Navbar counters: open service requests (admins) + unread chat messages (both).
   useEffect(() => {
-    if (user?.role !== 'admin') {
+    if (!user) {
       return;
     }
 
-    apiGet('/requests/list.php')
-      .then((d) => setOpenRequests(d.requests.filter((r) => r.status === 'open').length))
+    if (user.role === 'admin') {
+      apiGet('/requests/list.php')
+        .then((d) => setOpenRequests(d.requests.filter((r) => r.status === 'open').length))
+        .catch(() => {});
+    }
+
+    apiGet('/chat/unread.php')
+      .then((d) => setUnreadChats(d.unread))
       .catch(() => {});
   }, [user]);
 
@@ -56,8 +66,8 @@ export default function DashboardShell({ subtitle, children }) {
               className={({ isActive }) => `adhub-nav-link${isActive ? ' active' : ''}`}
             >
               {link.label}
-              {link.badge === 'openRequests' && openRequests > 0 && (
-                <span className="badge text-bg-warning ms-1">{openRequests}</span>
+              {link.badge && badges[link.badge] > 0 && (
+                <span className="badge text-bg-warning ms-1">{badges[link.badge]}</span>
               )}
             </NavLink>
           ))}
