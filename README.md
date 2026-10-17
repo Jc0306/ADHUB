@@ -9,7 +9,7 @@ api/        PHP REST API — the only layer that talks to MySQL (database: adhub
 frontend/   React SPA (Vite + Bootstrap 5 + Recharts)
 legacy/     Original PHP pages, kept for reference
 uploads/    Uploaded deliverable files (git-ignored)
-DATABASE/   SQL dump (adhubdb.sql)
+DATABASE/   adhubdb.sql (schema + admin), seed-demo.* (optional demo data)
 ```
 
 ## Features
@@ -24,13 +24,19 @@ DATABASE/   SQL dump (adhubdb.sql)
 ## Run locally
 
 1. Start **Apache** and **MySQL** in the XAMPP Control Panel.
-2. Frontend (dev):
+2. Database (first time only): create a database named `adhubdb` and import
+   `DATABASE\adhubdb.sql` into it — via phpMyAdmin or from the CLI:
+   ```
+   C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE IF NOT EXISTS adhubdb"
+   Get-Content DATABASE\adhubdb.sql -Raw | C:\xampp\mysql\bin\mysql.exe -u root adhubdb
+   ```
+3. Frontend (dev):
    ```
    cd frontend
    npm install
    npm run dev
    ```
-3. Open http://localhost:5173 — requests to `/api` are proxied to
+4. Open http://localhost:5173 — requests to `/api` are proxied to
    `http://localhost/Adhub/api` (see `frontend/vite.config.js`).
 
 ## Demo data
@@ -39,9 +45,11 @@ DATABASE/   SQL dump (adhubdb.sql)
 powershell -ExecutionPolicy Bypass -File DATABASE\seed-demo.ps1
 ```
 
-Imports three demo clients — `bloom@gmail.com`, `urbanfit@gmail.com`,
-`brewbean@gmail.com` (password: `demo1234`) — with projects across every
-stage, deliverables, retainers and time logs. Safe to re-run anytime.
+Requires the step-2 schema import. Imports three demo clients —
+`bloom@gmail.com`, `urbanfit@gmail.com`, `brewbean@gmail.com` (password:
+`demo1234`) — with projects across every stage, deliverables, retainers and
+time logs. Only touches the demo accounts, so it is safe to re-run anytime
+(other data is untouched).
 
 Admin account (seeded): `admin@gmail.com` / `ADMIN` — the API upgrades
 legacy plaintext passwords to bcrypt hashes on first login.
