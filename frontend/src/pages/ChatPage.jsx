@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import DashboardShell from '../components/DashboardShell.jsx';
 import ChatThread from '../components/ChatThread.jsx';
 import { apiGet } from '../api/client.js';
@@ -69,9 +70,14 @@ export default function ChatPage() {
         <p className="text-muted-light">Loading…</p>
       ) : threads.length === 0 ? (
         <div className="adhub-card p-4 text-muted-light">
-          {isAdmin
-            ? 'No projects yet — every campaign project gets its own chat thread.'
-            : 'No chats yet — once the agency starts a campaign for you, its chat appears here.'}
+          {isAdmin ? (
+            <>
+              No projects yet — every campaign project gets its own chat thread. Accept a{' '}
+              <Link to="/admin/requests">service request</Link> to create its project.
+            </>
+          ) : (
+            'No chats yet — once the agency starts a campaign for you, its chat appears here.'
+          )}
         </div>
       ) : (
         <div className="row g-4">
