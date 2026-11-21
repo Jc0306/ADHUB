@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import DashboardShell from '../components/DashboardShell.jsx';
 import ChatThread from '../components/ChatThread.jsx';
 import { apiGet } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { formatDate } from '../constants.js';
+import EmptyState from '../components/EmptyState.jsx';
 
 const POLL_MS = 5000;
 
@@ -69,16 +69,14 @@ export default function ChatPage() {
       {loading ? (
         <p className="text-muted-light">Loading…</p>
       ) : threads.length === 0 ? (
-        <div className="adhub-card p-4 text-muted-light">
-          {isAdmin ? (
-            <>
-              No projects yet — every campaign project gets its own chat thread. Accept a{' '}
-              <Link to="/admin/requests">service request</Link> to create its project.
-            </>
-          ) : (
-            'No chats yet — once the agency starts a campaign for you, its chat appears here.'
-          )}
-        </div>
+        <EmptyState
+          icon="💬"
+          title={isAdmin ? 'No chat threads yet' : 'No chats yet'}
+          description={isAdmin
+            ? 'Every campaign project gets its own chat thread. Accept a service request to create its project.'
+            : 'Once the agency starts a campaign for you, its chat appears here.'}
+          action={isAdmin ? { label: 'View Requests', to: '/admin/requests' } : null}
+        />
       ) : (
         <div className="row g-4">
           <div className="col-lg-4">

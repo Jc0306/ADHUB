@@ -99,7 +99,8 @@ CREATE TABLE `tbl_projects` (
   `description` text DEFAULT NULL,
   `status` enum('pending','in-progress','revision','completed','rejected') DEFAULT 'pending',
   `progress_percent` int(11) DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  CONSTRAINT `chk_service_type` CHECK (`service_type` IN ('','Graphic Design','Logo Design','Slogan','Poster'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

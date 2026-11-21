@@ -1,11 +1,21 @@
 import { Link } from 'react-router-dom';
 import StatusBadge from './StatusBadge.jsx';
 import { formatDate, formatMoney } from '../constants.js';
+import EmptyState from './EmptyState.jsx';
 
 /** Project overview table used by both dashboards. */
 export default function ProjectsTable({ projects, detailBase, showClient = false }) {
   if (projects.length === 0) {
-    return <p className="text-muted-light mb-0">No projects yet.</p>;
+    return (
+      <EmptyState
+        icon="📁"
+        title="No projects yet"
+        description={showClient
+          ? "You haven't been assigned any campaigns yet. Once the agency starts a project for you, it will appear here."
+          : "No campaigns created yet. Accept a client request to spin up a new project."}
+        action={showClient ? null : { label: 'View Requests', to: '/admin/requests' }}
+      />
+    );
   }
 
   return (

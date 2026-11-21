@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 import ApprovalBadge from './ApprovalBadge.jsx';
 import { formatDate } from '../constants.js';
+import EmptyState from './EmptyState.jsx';
 
 /**
  * Deliverable files table.
@@ -13,7 +14,13 @@ export default function DeliverablesTable({ deliverables, onDelete, onApprove, o
   const [working, setWorking] = useState(false);
 
   if (deliverables.length === 0) {
-    return <p className="text-muted-light mb-0">No deliverables uploaded yet.</p>;
+    return (
+      <EmptyState
+        icon="📄"
+        title="No deliverables yet"
+        description="Uploaded assets will appear here. The agency can add files from the project detail page."
+      />
+    );
   }
 
   const latestVersion = {};

@@ -5,6 +5,7 @@ import RequestStatusBadge from '../components/RequestStatusBadge.jsx';
 import { apiGet, apiPost } from '../api/client.js';
 import { showToast } from '../toast.js';
 import { formatDate } from '../constants.js';
+import EmptyState from '../components/EmptyState.jsx';
 
 /** Client area — send service requests to the agency and follow the replies. */
 export default function RequestsPage() {
@@ -87,9 +88,11 @@ export default function RequestsPage() {
           {loading ? (
             <p className="text-muted-light">Loading…</p>
           ) : requests.length === 0 ? (
-            <div className="adhub-card p-4 text-muted-light">
-              You haven&apos;t sent any requests yet — use the form to ask the agency for new work.
-            </div>
+            <EmptyState
+              icon="📝"
+              title="No requests yet"
+              description="Use the form on the left to ask the agency for new work."
+            />
           ) : (
             requests.map((req) => (
               <div key={req.id} className="adhub-card p-4 mb-3">
