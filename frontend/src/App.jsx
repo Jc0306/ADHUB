@@ -1,19 +1,21 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
-import AdminDashboard from './pages/AdminDashboard.jsx';
-import ClientDashboard from './pages/ClientDashboard.jsx';
-import AdminProjectDetail from './pages/AdminProjectDetail.jsx';
-import ClientProjectDetail from './pages/ClientProjectDetail.jsx';
-import CostsPage from './pages/CostsPage.jsx';
-import ProjectReport from './pages/ProjectReport.jsx';
-import AnalyticsPage from './pages/AnalyticsPage.jsx';
-import RequestsPage from './pages/RequestsPage.jsx';
-import AdminRequestsPage from './pages/AdminRequestsPage.jsx';
-import ChatPage from './pages/ChatPage.jsx';
+import { Suspense, lazy } from 'react';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import ToastHost from './components/ToastHost.jsx';
+
+const Login = lazy(() => import('./pages/Login.jsx'));
+const Register = lazy(() => import('./pages/Register.jsx'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard.jsx'));
+const ClientDashboard = lazy(() => import('./pages/ClientDashboard.jsx'));
+const AdminProjectDetail = lazy(() => import('./pages/AdminProjectDetail.jsx'));
+const ClientProjectDetail = lazy(() => import('./pages/ClientProjectDetail.jsx'));
+const CostsPage = lazy(() => import('./pages/CostsPage.jsx'));
+const ProjectReport = lazy(() => import('./pages/ProjectReport.jsx'));
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage.jsx'));
+const RequestsPage = lazy(() => import('./pages/RequestsPage.jsx'));
+const AdminRequestsPage = lazy(() => import('./pages/AdminRequestsPage.jsx'));
+const ChatPage = lazy(() => import('./pages/ChatPage.jsx'));
 
 /** Landing route for the user's role. */
 function roleHome(user) {
@@ -61,11 +63,20 @@ function AuthRoute({ children }) {
   return children;
 }
 
+function Loading() {
+  return (
+    <div className="min-vh-100 d-flex align-items-center justify-content-center text-muted-light">
+      Loading…
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <>
       <ToastHost />
       <ErrorBoundary>
+      <Suspense fallback={<Loading />}>
       <Routes>
       <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<Login />} />
@@ -160,6 +171,7 @@ export default function App() {
       />
       <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
       </ErrorBoundary>
     </>
   );
