@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import DashboardShell from '../components/DashboardShell.jsx';
 import DeliverablesTable from '../components/DeliverablesTable.jsx';
@@ -25,7 +25,7 @@ export default function AdminProjectDetail() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const d = await apiGet(`/projects/show.php?id=${id}`);
       setProject(d.project);
@@ -44,9 +44,9 @@ export default function AdminProjectDetail() {
     } catch (e) {
       setError(e.message);
     }
-  }
+  }, [id]);
 
-  useEffect(() => { load(); }, [id]);
+  useEffect(() => { load(); }, [load]);
   usePoll(load, 10000);
 
   function set(field) {

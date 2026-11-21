@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { apiGet, apiPost } from '../api/client.js';
 import { formatDate } from '../constants.js';
 
-const POLL_MS = 3000;
+const POLL_MS = 5000;
 
 /**
  * Project chat conversation view with ~3s polling — every thread belongs to

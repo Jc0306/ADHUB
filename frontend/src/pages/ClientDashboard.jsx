@@ -1,9 +1,47 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import DashboardShell from '../components/DashboardShell.jsx';
 import ProjectsTable from '../components/ProjectsTable.jsx';
+import Skeleton from '../components/Skeleton.jsx';
 import { apiGet } from '../api/client.js';
 import { formatMoney } from '../constants.js';
 import { usePoll } from '../hooks/usePoll.js';
+
+function SummarySkeleton() {
+  return (
+    <div className="row g-3 mb-3">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="col-md-4">
+          <Skeleton variant="card" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TableSkeleton() {
+  return (
+    <div className="table-responsive">
+      <table className="adhub-table">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Service</th>
+            <th className="text-end">Budget</th>
+            <th className="text-end">Progress</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th className="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} variant="table-row" />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export default function ClientDashboard() {
   const [projects, setProjects] = useState([]);
@@ -11,7 +49,7 @@ export default function ClientDashboard() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const [p, s] = await Promise.all([
         apiGet('/projects/list.php'),
@@ -25,14 +63,16 @@ export default function ClientDashboard() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
   usePoll(load, 10000);
 
   return (
     <DashboardShell subtitle="Client Dashboard">
-      {summary && (
+      {loading ? (
+        <SummarySkeleton />
+      ) : summary && (
         <div className="row g-3 mb-3">
           <div className="col-md-4">
             <div className="adhub-card p-3">
@@ -63,9 +103,7 @@ export default function ClientDashboard() {
 
       <div className="adhub-card p-4">
         {error && <div className="alert alert-danger py-2">{error}</div>}
-        {loading
-          ? <p className="text-muted-light mb-0">Loading…</p>
-          : <ProjectsTable projects={projects} detailBase="/client/projects" />}
+        {loading ? <TableSkeleton /> : <ProjectsTable projects={projects} detailBase="/client/projects" />}
       </div>
     </DashboardShell>
   );

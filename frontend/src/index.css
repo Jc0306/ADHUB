@@ -17,6 +17,11 @@
   outline-offset: 2px;
 }
 
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 :root {
   --adhub-bg-deep: #0a121d;
   --adhub-bg-top: #132238;
