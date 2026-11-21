@@ -6,6 +6,7 @@ import StatusBadge from '../components/StatusBadge.jsx';
 import { apiGet, apiPost } from '../api/client.js';
 import { showToast } from '../toast.js';
 import { REQUEST_STATUSES, REQUEST_STATUS_LABELS, formatDate } from '../constants.js';
+import { usePoll } from '../hooks/usePoll.js';
 
 /** Admin area — incoming service requests: reply, and accept to create the project. */
 export default function AdminRequestsPage() {
@@ -15,21 +16,27 @@ export default function AdminRequestsPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState(null);
-  const [accepting, setAccepting] = useState(null); // request id while its project is being created
+  const [accepting, setAccepting] = useState(null);
 
-  useEffect(() => {
-    apiGet('/requests/list.php')
-      .then((d) => {
-        setRequests(d.requests);
-        setDrafts(
-          Object.fromEntries(
-            d.requests.map((r) => [r.id, { reply: r.admin_reply ?? '', status: r.status }])
-          )
-        );
-      })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
+  async function load() {
+    try {
+      const d = await apiGet('/requests/list.php');
+      setRequests(d.requests);
+      setDrafts(
+        Object.fromEntries(
+          d.requests.map((r) => [r.id, { reply: r.admin_reply ?? '', status: r.status }])
+        )
+      );
+      setError('');
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { load(); }, []);
+  usePoll(load, 10000);
 
   function syncRequest(request) {
     setRequests((list) => list.map((r) => (r.id === request.id ? request : r)));

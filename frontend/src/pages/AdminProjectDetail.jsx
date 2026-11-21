@@ -7,6 +7,7 @@ import ChatThread from '../components/ChatThread.jsx';
 import { apiGet, apiPost, apiUpload } from '../api/client.js';
 import { showToast } from '../toast.js';
 import { PROJECT_STATUSES, SERVICE_TYPES, STATUS_LABELS, formatDate, formatMoney } from '../constants.js';
+import { usePoll } from '../hooks/usePoll.js';
 
 export default function AdminProjectDetail() {
   const { id } = useParams();
@@ -24,8 +25,9 @@ export default function AdminProjectDetail() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  function load() {
-    return apiGet(`/projects/show.php?id=${id}`).then((d) => {
+  async function load() {
+    try {
+      const d = await apiGet(`/projects/show.php?id=${id}`);
       setProject(d.project);
       setDeliverables(d.deliverables);
       setLogs(d.logs);
@@ -38,13 +40,14 @@ export default function AdminProjectDetail() {
         status: d.project.status,
         progress_percent: d.project.progress_percent,
       });
-    });
+      setError('');
+    } catch (e) {
+      setError(e.message);
+    }
   }
 
-  useEffect(() => {
-    load().catch((e) => setError(e.message));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  useEffect(() => { load(); }, [id]);
+  usePoll(load, 10000);
 
   function set(field) {
     return (e) => setEdit({ ...edit, [field]: e.target.value });

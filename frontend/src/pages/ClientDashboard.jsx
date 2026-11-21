@@ -3,6 +3,7 @@ import DashboardShell from '../components/DashboardShell.jsx';
 import ProjectsTable from '../components/ProjectsTable.jsx';
 import { apiGet } from '../api/client.js';
 import { formatMoney } from '../constants.js';
+import { usePoll } from '../hooks/usePoll.js';
 
 export default function ClientDashboard() {
   const [projects, setProjects] = useState([]);
@@ -10,16 +11,24 @@ export default function ClientDashboard() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    apiGet('/projects/list.php')
-      .then((d) => setProjects(d.projects))
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
+  async function load() {
+    try {
+      const [p, s] = await Promise.all([
+        apiGet('/projects/list.php'),
+        apiGet('/costs/summary.php').catch(() => null),
+      ]);
+      setProjects(p.projects);
+      setSummary(s);
+      setError('');
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-    apiGet('/costs/summary.php')
-      .then(setSummary)
-      .catch(() => setSummary(null));
-  }, []);
+  useEffect(() => { load(); }, []);
+  usePoll(load, 10000);
 
   return (
     <DashboardShell subtitle="Client Dashboard">

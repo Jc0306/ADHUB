@@ -7,17 +7,25 @@ import ChatThread from '../components/ChatThread.jsx';
 import { apiGet, apiPost } from '../api/client.js';
 import { showToast } from '../toast.js';
 import { formatDate, formatMoney } from '../constants.js';
+import { usePoll } from '../hooks/usePoll.js';
 
 export default function ClientProjectDetail() {
   const { id } = useParams();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    apiGet(`/projects/show.php?id=${id}`)
-      .then(setData)
-      .catch((e) => setError(e.message));
-  }, [id]);
+  async function load() {
+    try {
+      const d = await apiGet(`/projects/show.php?id=${id}`);
+      setData(d);
+      setError('');
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  useEffect(() => { load(); }, [id]);
+  usePoll(load, 10000);
 
   async function handleReview(deliverable, action, note) {
     try {
