@@ -1,5 +1,7 @@
 # Dependencies
 node_modules/
+vendor/
+composer.phar
 
 # Build output
 frontend/dist/
@@ -9,3 +11,4 @@ uploads/
 
 # Logs
 *.log
+.phpunit.result.cache
