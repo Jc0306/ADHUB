@@ -26,6 +26,10 @@ if ($title === '') {
 if (mb_strlen($title) > 255) {
     json_error('Project title is too long (max 255 characters).');
 }
+$allowedServiceTypes = ['', 'Graphic Design', 'Logo Design', 'Slogan', 'Poster'];
+if (!in_array($serviceType, $allowedServiceTypes, true)) {
+    json_error('Invalid service type.');
+}
 if (mb_strlen($serviceType) > 100) {
     json_error('Service type is too long (max 100 characters).');
 }
