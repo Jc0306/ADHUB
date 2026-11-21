@@ -123,7 +123,7 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`id`, `full_name`, `email`, `password`, `role`, `company_name`, `created_at`) VALUES
-(1, 'ADMIN', 'admin@gmail.com', 'ADMIN', 'admin', 'ADMIN', '2026-05-11 16:30:35');
+(1, 'ADMIN', 'admin@gmail.com', '$2y$10$ejckuBAK4y2lrstGCDwE5O2Ra5aBdsd6FXxtdlrPPKJmj5XCNBbGy', 'admin', 'ADMIN', '2026-05-11 16:30:35');
 
 --
 -- Indexes for dumped tables

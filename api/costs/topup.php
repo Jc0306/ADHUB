@@ -10,6 +10,9 @@ $clientId = (int) ($input['client_id'] ?? 0);
 $amount   = $input['amount'] ?? 0;
 $note     = trim($input['note'] ?? '');
 
+if (mb_strlen($note) > 255) {
+    json_error('Note is too long (max 255 characters).');
+}
 if (!is_numeric($amount) || (float) $amount <= 0) {
     json_error('Amount must be a positive number.');
 }

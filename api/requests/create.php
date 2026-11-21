@@ -17,6 +17,9 @@ $message = trim($input['message'] ?? '');
 if ($title === '') {
     json_error('Request title is required.');
 }
+if (mb_strlen($title) > 255) {
+    json_error('Request title is too long (max 255 characters).');
+}
 if ($message === '') {
     json_error('Please describe what you need.');
 }

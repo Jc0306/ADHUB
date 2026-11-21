@@ -7,10 +7,13 @@ Decoupled app: React (Vite) frontend + PHP REST API + MySQL, served locally with
 ```
 api/        PHP REST API — the only layer that talks to MySQL (database: adhubdb)
 frontend/   React SPA (Vite + Bootstrap 5 + Recharts)
-legacy/     Original PHP pages, kept for reference
+legacy/     Original PHP pages, kept for reference (blocked from web access)
 uploads/    Uploaded deliverable files (git-ignored)
 DATABASE/   adhubdb.sql (schema + admin), seed-demo.* (optional demo data)
 ```
+
+Apache rules in `.htaccess` block direct access to `uploads/`, `DATABASE/`,
+`legacy/` and `.git/`; deliverables are served only through the API.
 
 ## Features
 
@@ -30,7 +33,7 @@ DATABASE/   adhubdb.sql (schema + admin), seed-demo.* (optional demo data)
    `DATABASE\adhubdb.sql` into it — via phpMyAdmin or from the CLI:
    ```
    C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE IF NOT EXISTS adhubdb"
-   Get-Content DATABASE\adhubdb.sql -Raw | C:\xampp\mysql\bin\mysql.exe -u root adhubdb
+   Get-Content DATABASE\adhubdb.sql -Raw | C:\xampp\mysql\bin\mysql.exe --default-character-set=utf8mb4 -u root adhubdb
    ```
 3. Frontend (dev):
    ```

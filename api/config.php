@@ -67,6 +67,12 @@ function require_method(string $method): void
 function start_session(): void
 {
     if (session_status() === PHP_SESSION_NONE) {
+        session_set_cookie_params([
+            'httponly' => true,
+            'samesite' => 'Lax',
+            'secure'   => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        ]);
+        ini_set('session.use_strict_mode', '1');
         session_start();
     }
 }

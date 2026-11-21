@@ -5,6 +5,7 @@
 #   powershell -ExecutionPolicy Bypass -File "E:\Documents\Adhub\DATABASE\seed-demo.ps1"
 
 $ErrorActionPreference = 'Stop'
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 $dbDir   = $PSScriptRoot
 $root    = Split-Path -Parent $dbDir
@@ -13,7 +14,7 @@ $sqlFile = Join-Path $dbDir 'seed-demo.sql'
 $uploads = Join-Path $root 'uploads\deliverables'
 
 # 1) Import the demo data.
-Get-Content $sqlFile -Raw | & $mysql -u root adhubdb
+Get-Content $sqlFile -Raw -Encoding UTF8 | & $mysql --default-character-set=utf8mb4 -u root adhubdb
 if ($LASTEXITCODE -ne 0) {
     throw "mysql import failed (exit $LASTEXITCODE). Is MySQL running in XAMPP?"
 }

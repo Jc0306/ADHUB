@@ -4,6 +4,9 @@
  * updates its status (admin only).
  *
  * Body: { id, status: "open" | "accepted" | "done", reply? }
+ *
+ * "accepted" is only a no-op on an already-accepted request; accepting an
+ * open request must go through accept.php so its project is created.
  */
 
 require_once __DIR__ . '/../config.php';
@@ -18,15 +21,16 @@ $reply  = trim($input['reply'] ?? '');
 if (!in_array($status, REQUEST_STATUSES, true)) {
     json_error('Invalid status.');
 }
-if ($status === 'accepted') {
-    json_error('Use "Accept — Create Project" to accept — that creates the campaign project.');
-}
 
-$stmt = db()->prepare('SELECT id FROM tbl_requests WHERE id = ? LIMIT 1');
+$stmt = db()->prepare('SELECT id, status FROM tbl_requests WHERE id = ? LIMIT 1');
 $stmt->execute([$id]);
+$request = $stmt->fetch();
 
-if (!$stmt->fetch()) {
+if (!$request) {
     json_error('Request not found.', 404);
+}
+if ($status === 'accepted' && $request['status'] !== 'accepted') {
+    json_error('Use "Accept — Create Project" to accept — that creates the campaign project.');
 }
 
 if ($reply !== '') {

@@ -45,6 +45,9 @@ $displayName = trim($_POST['display_name'] ?? '');
 if ($displayName === '') {
     $displayName = $file['name'];
 }
+if (mb_strlen($displayName) > 255) {
+    json_error('Display name is too long (max 255 characters).');
+}
 
 $dir = __DIR__ . '/../../uploads/deliverables';
 if (!is_dir($dir)) {

@@ -13,6 +13,15 @@ $password  = (string) ($input['password'] ?? '');
 if ($full_name === '' || $email === '' || $password === '') {
     json_error('Full name, email, and password are required.');
 }
+if (mb_strlen($full_name) > 255) {
+    json_error('Full name is too long (max 255 characters).');
+}
+if (mb_strlen($email) > 255) {
+    json_error('Email is too long (max 255 characters).');
+}
+if (mb_strlen($company) > 255) {
+    json_error('Company name is too long (max 255 characters).');
+}
 
 // Same rule as the legacy app: Gmail addresses only.
 if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !str_ends_with($email, '@gmail.com')) {

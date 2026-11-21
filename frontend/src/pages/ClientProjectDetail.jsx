@@ -27,6 +27,7 @@ export default function ClientProjectDetail() {
         note,
       });
       setData((prev) => ({
+        ...prev,
         project: result.project,
         deliverables: prev.deliverables.map((d) =>
           d.id === deliverable.id ? result.deliverable : d

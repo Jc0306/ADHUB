@@ -1,0 +1,11 @@
+# Keep source, data and reference material private. Apache should only serve
+# api/ and the built frontend (frontend/dist).
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteRule ^(?:\.git|DATABASE|legacy|uploads)(?:/|$) - [F,L,NC]
+    RewriteRule ^frontend/(?!dist(?:/|$)) - [F,L,NC]
+    RewriteRule ^(?:README\.md|package\.json|package-lock\.json|\.gitignore)$ - [F,L,NC]
+</IfModule>
