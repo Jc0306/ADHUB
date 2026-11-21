@@ -27,6 +27,9 @@ $note   = trim($input['note'] ?? '');
 if (!in_array($action, ['approve', 'revision'], true)) {
     json_error('Invalid action. Use "approve" or "revision".');
 }
+if ($action === 'revision' && $note === '') {
+    json_error('A note is required when requesting a revision.');
+}
 
 $stmt = db()->prepare(
     'SELECT d.id, d.project_id, p.client_id FROM tbl_deliverables d
@@ -47,6 +50,19 @@ if ((int) $deliverable['client_id'] !== $user['id']) {
 $projectId = (int) $deliverable['project_id'];
 
 if ($action === 'approve') {
+    // Only the latest version can be approved.
+    $stmt = db()->prepare(
+        "SELECT MAX(version) AS v FROM tbl_deliverables WHERE project_id = ? AND display_name = (SELECT display_name FROM tbl_deliverables WHERE id = ?)"
+    );
+    $stmt->execute([$projectId, $id]);
+    $latest = $stmt->fetch();
+    $stmt = db()->prepare('SELECT version FROM tbl_deliverables WHERE id = ?');
+    $stmt->execute([$id]);
+    $thisVer = (int) $stmt->fetchColumn();
+    if ($thisVer !== (int) $latest['v']) {
+        json_error('Only the latest version can be approved.', 409);
+    }
+
     $stmt = db()->prepare(
         "UPDATE tbl_deliverables SET approval_status = 'approved', review_note = NULL, reviewed_at = NOW() WHERE id = ?"
     );
