@@ -16,22 +16,29 @@ require_admin();
 $input = json_input();
 $id    = (int) ($input['id'] ?? 0);
 
-$request = find_request($id);
-
-if (!$request) {
-    json_error('Request not found.', 404);
-}
-if ($request['project_id'] !== null) {
-    json_error('This request already has its project.', 409);
-}
-if ($request['status'] === 'done') {
-    json_error('Only open requests can be accepted.', 409);
-}
-
 $pdo = db();
 
 try {
     $pdo->beginTransaction();
+
+    $stmt = $pdo->prepare(
+        "SELECT id, client_id, title, message, status, project_id FROM tbl_requests WHERE id = ? FOR UPDATE"
+    );
+    $stmt->execute([$id]);
+    $request = $stmt->fetch();
+
+    if (!$request) {
+        $pdo->rollBack();
+        json_error('Request not found.', 404);
+    }
+    if ($request['project_id'] !== null) {
+        $pdo->rollBack();
+        json_error('This request already has its project.', 409);
+    }
+    if ($request['status'] === 'done') {
+        $pdo->rollBack();
+        json_error('Only open requests can be accepted.', 409);
+    }
 
     $stmt = $pdo->prepare(
         "INSERT INTO tbl_projects (client_id, title, service_type, budget, description, status, progress_percent)
