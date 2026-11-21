@@ -39,22 +39,22 @@ export default function Register() {
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label" htmlFor="full_name">Full Name</label>
-            <input id="full_name" className="form-control" value={form.full_name} onChange={set('full_name')} required />
+            <input id="full_name" className="form-control" value={form.full_name} onChange={set('full_name')} required autoComplete="name" />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="email">Email Address (Gmail only)</label>
-            <input id="email" type="email" className="form-control" value={form.email} onChange={set('email')} required />
+            <input id="email" type="email" className="form-control" value={form.email} onChange={set('email')} required autoComplete="email" spellCheck={false} />
           </div>
 
           <div className="mb-3">
             <label className="form-label" htmlFor="company_name">Company Name</label>
-            <input id="company_name" className="form-control" value={form.company_name} onChange={set('company_name')} />
+            <input id="company_name" className="form-control" value={form.company_name} onChange={set('company_name')} autoComplete="organization" />
           </div>
 
           <div className="mb-4">
             <label className="form-label" htmlFor="password">Password</label>
-            <input id="password" type="password" className="form-control" value={form.password} onChange={set('password')} required />
+            <input id="password" type="password" className="form-control" value={form.password} onChange={set('password')} required autoComplete="new-password" />
           </div>
 
           <button type="submit" className="btn btn-adhub w-100" disabled={busy}>

@@ -216,37 +216,37 @@ export default function AdminProjectDetail() {
             <form onSubmit={handleSave}>
               <div className="mb-3">
                 <label className="form-label" htmlFor="title">Project Title</label>
-                <input id="title" className="form-control" value={edit.title} onChange={set('title')} required />
+                <input id="title" className="form-control" value={edit.title} onChange={set('title')} required autoComplete="off" />
               </div>
 
               <div className="row">
                 <div className="col-md-4 mb-3">
                   <label className="form-label" htmlFor="service_type">Service Type</label>
-                  <select id="service_type" className="form-select" value={edit.service_type} onChange={set('service_type')}>
+                  <select id="service_type" className="form-select" value={edit.service_type} onChange={set('service_type')} autoComplete="off">
                     <option value="">— Not set —</option>
                     {SERVICE_TYPES.map((s) => <option key={s}>{s}</option>)}
                   </select>
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label" htmlFor="budget">Budget ($)</label>
-                  <input id="budget" type="number" min="0" step="0.01" className="form-control" value={edit.budget} onChange={set('budget')} required />
+                  <input id="budget" type="number" min="0" step="0.01" className="form-control" value={edit.budget} onChange={set('budget')} required autoComplete="off" />
                 </div>
                 <div className="col-md-4 mb-3">
                   <label className="form-label" htmlFor="progress_percent">Progress %</label>
-                  <input id="progress_percent" type="number" min="0" max="100" className="form-control" value={edit.progress_percent} onChange={set('progress_percent')} required />
+                  <input id="progress_percent" type="number" min="0" max="100" className="form-control" value={edit.progress_percent} onChange={set('progress_percent')} required autoComplete="off" />
                 </div>
               </div>
 
               <div className="mb-3">
                 <label className="form-label" htmlFor="status">Status</label>
-                <select id="status" className="form-select" value={edit.status} onChange={set('status')}>
+                <select id="status" className="form-select" value={edit.status} onChange={set('status')} autoComplete="off">
                   {PROJECT_STATUSES.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
                 </select>
               </div>
 
               <div className="mb-4">
                 <label className="form-label" htmlFor="description">Brief Details &amp; Instructions</label>
-                <textarea id="description" className="form-control" rows="6" value={edit.description} onChange={set('description')} />
+                <textarea id="description" className="form-control" rows="6" value={edit.description} onChange={set('description')} autoComplete="off" />
               </div>
 
               <button type="submit" className="btn btn-adhub" disabled={busy}>
@@ -317,17 +317,17 @@ export default function AdminProjectDetail() {
               <div className="row">
                 <div className="col-6 mb-3">
                   <label className="form-label" htmlFor="hours">Hours</label>
-                  <input id="hours" type="number" min="0.25" step="0.25" className="form-control" placeholder="e.g. 2.5" value={logForm.hours} onChange={setLog('hours')} required />
+                  <input id="hours" type="number" min="0.25" step="0.25" className="form-control" placeholder="e.g. 2.5" value={logForm.hours} onChange={setLog('hours')} required autoComplete="off" />
                 </div>
                 <div className="col-6 mb-3">
                   <label className="form-label" htmlFor="hourly_rate">Hourly Rate ($)</label>
-                  <input id="hourly_rate" type="number" min="0.01" step="0.01" className="form-control" value={logForm.hourly_rate} onChange={setLog('hourly_rate')} required />
+                  <input id="hourly_rate" type="number" min="0.01" step="0.01" className="form-control" value={logForm.hourly_rate} onChange={setLog('hourly_rate')} required autoComplete="off" />
                 </div>
               </div>
 
               <div className="mb-3">
                 <label className="form-label" htmlFor="log_note">What was done?</label>
-                <input id="log_note" className="form-control" placeholder="e.g. Drafting hero banners" value={logForm.note} onChange={setLog('note')} />
+                <input id="log_note" className="form-control" placeholder="e.g. Drafting hero banners" value={logForm.note} onChange={setLog('note')} autoComplete="off" />
               </div>
 
               <button type="submit" className="btn btn-adhub btn-sm" disabled={busy}>
@@ -363,6 +363,7 @@ export default function AdminProjectDetail() {
                   placeholder="Defaults to the file name"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
+                  autoComplete="off"
                 />
               </div>
 

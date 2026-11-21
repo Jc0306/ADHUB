@@ -70,6 +70,7 @@ export default function DeliverablesTable({ deliverables, onDelete, onApprove, o
                     <a
                       className="btn btn-outline-light btn-sm"
                       href={`/api/projects/deliverable-download.php?id=${d.id}`}
+                      download
                     >
                       Download
                     </a>
@@ -111,7 +112,11 @@ export default function DeliverablesTable({ deliverables, onDelete, onApprove, o
                   <tr>
                     <td colSpan={5}>
                       <div className="d-flex gap-2 align-items-start">
+                        <label htmlFor={`revision-note-${d.id}`} className="visually-hidden">
+                          Revision note
+                        </label>
                         <textarea
+                          id={`revision-note-${d.id}`}
                           className="form-control"
                           rows={2}
                           placeholder="What should the agency change?"

@@ -14,12 +14,12 @@ const ACCENT = {
 /** Kanban board — columns per project stage, built on the Bootstrap grid. */
 export default function KanbanBoard({ projects, detailBase }) {
   return (
-    <div className="row g-3 flex-nowrap kanban-row">
+    <div className="row g-3 flex-nowrap kanban-row" role="list" aria-label="Project board">
       {COLUMNS.map((status) => {
         const items = projects.filter((p) => p.status === status);
 
         return (
-          <div className="col" key={status} style={{ minWidth: 225 }}>
+          <div className="col" key={status} style={{ minWidth: 225 }} role="listitem">
             <div className="d-flex justify-content-between align-items-center mb-2">
               <span className="fw-bold small text-uppercase text-muted-light">{STATUS_LABELS[status]}</span>
               <span className="badge text-bg-secondary">{items.length}</span>
@@ -40,7 +40,7 @@ export default function KanbanBoard({ projects, detailBase }) {
                     <span className="text-muted-light">{formatMoney(p.budget)}</span>
                     <span className="text-muted-light">{p.progress_percent}%</span>
                   </div>
-                  <div className="progress mt-2" style={{ height: 4 }}>
+                  <div className="progress mt-2" style={{ height: 4 }} role="progressbar" aria-valuenow={p.progress_percent} aria-valuemin={0} aria-valuemax={100} aria-label="Project progress">
                     <div className={`progress-bar bg-${ACCENT[status]}`} style={{ width: `${p.progress_percent}%` }} />
                   </div>
                 </Link>

@@ -107,9 +107,9 @@ export default function ChatThread({ projectId }) {
 
   return (
     <>
-      {error && <div className="alert alert-danger py-2">{error}</div>}
+      {error && <div className="alert alert-danger py-2" role="alert">{error}</div>}
 
-      <div className="chat-window">
+      <div className="chat-window" role="log" aria-live="polite" aria-atomic="false">
         {loading ? (
           <p className="text-muted-light">Loading…</p>
         ) : messages.length === 0 ? (
@@ -134,7 +134,11 @@ export default function ChatThread({ projectId }) {
       </div>
 
       <form className="d-flex gap-2 mt-3" onSubmit={handleSend}>
+        <label htmlFor="chat-input" className="visually-hidden">
+          Write a message
+        </label>
         <textarea
+          id="chat-input"
           className="form-control"
           rows="2"
           placeholder="Write a message… (Enter to send, Shift+Enter for a new line)"

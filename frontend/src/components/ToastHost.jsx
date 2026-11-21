@@ -35,9 +35,17 @@ export default function ToastHost() {
   }
 
   return (
-    <div className="toast-container position-fixed top-0 end-0 p-3">
+    <div
+      className="toast-container position-fixed top-0 end-0 p-3"
+      aria-live="polite"
+      aria-atomic="true"
+    >
       {toasts.map((t) => (
-        <div key={t.id} className={`toast show mb-2 ${TYPE_CLASSES[t.type] ?? 'text-bg-secondary'}`}>
+        <div
+          key={t.id}
+          role="alert"
+          className={`toast show mb-2 ${TYPE_CLASSES[t.type] ?? 'text-bg-secondary'}`}
+        >
           <div className="d-flex align-items-center">
             <div className="toast-body">{t.message}</div>
             <button

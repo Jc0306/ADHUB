@@ -56,6 +56,7 @@ export default function RequestsPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
+                  autoComplete="off"
                 />
               </div>
               <div className="mb-4">
@@ -68,6 +69,7 @@ export default function RequestsPage() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   required
+                  autoComplete="off"
                 />
               </div>
               <button type="submit" className="btn btn-adhub w-100" disabled={busy}>

@@ -51,7 +51,13 @@ export default function DashboardShell({ subtitle, children }) {
 
   return (
     <>
-      <nav className="adhub-navbar d-flex align-items-center justify-content-between px-4 py-3 sticky-top">
+      <a href="#main-content" className="visually-hidden focusable skip-link">
+        Skip to main content
+      </a>
+      <nav
+        className="adhub-navbar d-flex align-items-center justify-content-between px-4 py-3 sticky-top"
+        aria-label="Main navigation"
+      >
         <div className="d-flex align-items-center gap-3">
           <span className="fw-bold fs-4">ADHUB</span>
           <span className="badge text-bg-secondary text-uppercase">{user?.role}</span>
@@ -84,7 +90,7 @@ export default function DashboardShell({ subtitle, children }) {
         </div>
       </nav>
 
-      <main className="container-fluid px-4 py-4">
+      <main id="main-content" className="container-fluid px-4 py-4">
         <h1 className="h3 fw-bold mb-4">{subtitle}</h1>
         {children}
       </main>

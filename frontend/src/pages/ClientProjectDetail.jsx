@@ -97,7 +97,7 @@ export default function ClientProjectDetail() {
               <span className="text-muted-light">Progress</span>
               <span>{project.progress_percent}%</span>
             </div>
-            <div className="progress" style={{ height: 8 }}>
+            <div className="progress" style={{ height: 8 }} role="progressbar" aria-valuenow={project.progress_percent} aria-valuemin={0} aria-valuemax={100} aria-label="Project progress">
               <div className="progress-bar" style={{ width: `${project.progress_percent}%` }} />
             </div>
 

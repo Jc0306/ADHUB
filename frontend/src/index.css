@@ -1,5 +1,22 @@
 /* AdHub theme — matches the branding of the legacy pages. */
 
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--adhub-accent);
+  color: #fff;
+  padding: 8px 16px;
+  z-index: 100;
+  text-decoration: none;
+  border-radius: 0 0 8px 0;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
 :root {
   --adhub-bg-deep: #0a121d;
   --adhub-bg-top: #132238;
