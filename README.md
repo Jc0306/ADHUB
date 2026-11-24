@@ -20,7 +20,7 @@ and `.git/`; deliverables are served only through the API.
 - **Campaign asset management** — projects per client (created by accepting a request), versioned deliverable uploads
 - **Milestone approval workflow** — clients Approve / Request Revision; project stages move automatically; Kanban board (Bootstrap grid, desktop)
 - **Client service requests** — clients ask for new work; the agency replies, and **accepting a request opens its campaign project (In Progress)** from the request's title and message — budget, details and deliverables are handled inside the project. Projects start only from a client request (navbar shows the open count)
-- **Chat** — every campaign project has its own thread between the agency and that project's client (also embedded on the project page); no per-client general chat — conversations stay tied to the work; unread badges in the navbar and per thread, messages poll in every ~3 seconds while a chat is open
+- **Chat** — every campaign project has its own thread between the agency and that project's client (also embedded on the project page); no per-client general chat — conversations stay tied to the work; unread badges in the navbar and per thread, messages poll in every ~5 seconds while a chat is open
 - **Automated cost tracking** — client retainers (top-ups), logged hours x rate; balance is computed so deductions are always in sync
 - **Printable campaign reports** — milestones + remaining budget, via the Print Report button on any project
 - **Analytics** — project completion rate and budget utilization charts (admin)

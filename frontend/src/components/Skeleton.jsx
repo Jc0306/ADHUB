@@ -1,22 +1,13 @@
-import { useEffect, useState } from 'react';
-
 /**
  * Skeleton loader for content placeholders.
  * @param {string} variant - 'text' | 'card' | 'table-row' | 'circle' | 'rect'
  * @param {object} style - Additional inline styles
  */
 export default function Skeleton({ variant = 'text', style, className, ...props }) {
-  const [animated, setAnimated] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setAnimated(true), 0);
-    return () => clearTimeout(t);
-  }, []);
-
   const baseStyle = {
     background: 'linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%)',
     backgroundSize: '200% 100%',
-    animation: animated ? 'shimmer 1.5s infinite' : 'none',
+    animation: 'shimmer 1.5s infinite',
     borderRadius: variant === 'circle' ? '50%' : variant === 'rect' ? '0' : '4px',
     ...style,
   };
@@ -46,12 +37,8 @@ export default function Skeleton({ variant = 'text', style, className, ...props 
   }
 
   if (variant === 'circle') {
-    return <div className={className} style={{ ...baseStyle, width: 40, height: 40 }} {...props} />;
+    return <div className={className} style={{ width: 40, height: 40, ...baseStyle }} {...props} />;
   }
 
-  if (variant === 'rect') {
-    return <div className={className} style={{ ...baseStyle, height: 16, width: '100%' }} {...props} />;
-  }
-
-  return <div className={className} style={{ ...baseStyle, height: 16, width: '100%' }} {...props} />;
+  return <div className={className} style={{ height: 16, width: '100%', ...baseStyle }} {...props} />;
 }

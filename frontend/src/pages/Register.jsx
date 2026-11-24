@@ -19,7 +19,7 @@ export default function Register() {
     const newErrors = {};
     if (!form.full_name.trim()) newErrors.full_name = 'Full name is required';
     if (!form.email.trim()) newErrors.email = 'Email is required';
-    else if (!form.email.endsWith('@gmail.com')) newErrors.email = 'Only @gmail.com addresses are allowed';
+    else if (!form.email.trim().toLowerCase().endsWith('@gmail.com')) newErrors.email = 'Only @gmail.com addresses are allowed';
     if (!form.password) newErrors.password = 'Password is required';
     else if (form.password.length < 8) newErrors.password = 'Password must be at least 8 characters';
     if (form.password !== form.password_confirm) newErrors.password_confirm = 'Passwords do not match';

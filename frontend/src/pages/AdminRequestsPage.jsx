@@ -25,9 +25,10 @@ export default function AdminRequestsPage() {
     try {
       const d = await apiGet('/requests/list.php');
       setRequests(d.requests);
-      setDrafts(
+      // Keep drafts the admin is typing; only seed requests not seen before.
+      setDrafts((prev) =>
         Object.fromEntries(
-          d.requests.map((r) => [r.id, { reply: r.admin_reply ?? '', status: r.status }])
+          d.requests.map((r) => [r.id, prev[r.id] ?? { reply: r.admin_reply ?? '', status: r.status }])
         )
       );
       setError('');
@@ -115,10 +116,11 @@ export default function AdminRequestsPage() {
   }, [requests, filter, search]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1;
+  const currentPage = Math.min(page, totalPages);
   const paginated = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
+    const start = (currentPage - 1) * PAGE_SIZE;
     return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, page]);
+  }, [filtered, currentPage]);
 
   return (
     <DashboardShell subtitle="Client Requests">
@@ -253,7 +255,7 @@ export default function AdminRequestsPage() {
               <button
                 className="btn btn-outline-light btn-sm"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
+                disabled={currentPage === 1}
                 aria-label="Previous page"
               >
                 « Prev
@@ -261,10 +263,10 @@ export default function AdminRequestsPage() {
               {[...Array(totalPages)].map((_, i) => (
                 <button
                   key={i}
-                  className={`btn btn-sm ${page === i + 1 ? 'btn-adhub' : 'btn-outline-light'}`}
+                  className={`btn btn-sm ${currentPage === i + 1 ? 'btn-adhub' : 'btn-outline-light'}`}
                   onClick={() => setPage(i + 1)}
                   aria-label={`Page ${i + 1}`}
-                  aria-current={page === i + 1 ? 'page' : undefined}
+                  aria-current={currentPage === i + 1 ? 'page' : undefined}
                 >
                   {i + 1}
                 </button>
@@ -272,7 +274,7 @@ export default function AdminRequestsPage() {
               <button
                 className="btn btn-outline-light btn-sm"
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
+                disabled={currentPage === totalPages}
                 aria-label="Next page"
               >
                 Next »

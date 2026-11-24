@@ -13,6 +13,9 @@ $password  = (string) ($input['password'] ?? '');
 if ($full_name === '' || $email === '' || $password === '') {
     json_error('Full name, email, and password are required.');
 }
+if (mb_strlen($password) < 8) {
+    json_error('Password must be at least 8 characters.');
+}
 if (mb_strlen($full_name) > 255) {
     json_error('Full name is too long (max 255 characters).');
 }

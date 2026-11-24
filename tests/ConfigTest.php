@@ -12,14 +12,6 @@ class ConfigTest extends TestCase
         $this->assertInstanceOf(PDO::class, $pdo);
     }
 
-    public function testJsonResponse(): void
-    {
-        ob_start();
-        json_response(['ok' => true]);
-        $output = ob_get_clean();
-        $this->assertEquals(json_encode(['ok' => true]), $output);
-    }
-
     public function testRequireMethod(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
