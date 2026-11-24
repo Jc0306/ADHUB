@@ -13,6 +13,9 @@ export default function AdminProjectDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const fileRef = useRef(null);
+  // Which project the editable form belongs to. Polling must not overwrite
+  // what the admin is typing; it only seeds the form on first load / id change.
+  const editProjectRef = useRef(null);
 
   const [project, setProject] = useState(null);
   const [deliverables, setDeliverables] = useState([]);
@@ -32,14 +35,17 @@ export default function AdminProjectDetail() {
       setDeliverables(d.deliverables);
       setLogs(d.logs);
       setCost(d.cost);
-      setEdit({
-        title: d.project.title,
-        service_type: d.project.service_type,
-        budget: d.project.budget,
-        description: d.project.description ?? '',
-        status: d.project.status,
-        progress_percent: d.project.progress_percent,
-      });
+      if (editProjectRef.current !== id) {
+        editProjectRef.current = id;
+        setEdit({
+          title: d.project.title,
+          service_type: d.project.service_type,
+          budget: d.project.budget,
+          description: d.project.description ?? '',
+          status: d.project.status,
+          progress_percent: d.project.progress_percent,
+        });
+      }
       setError('');
     } catch (e) {
       setError(e.message);

@@ -26,6 +26,8 @@ export const APPROVAL_LABELS = {
   revision: 'Needs Revision',
 };
 
-export const formatMoney = (value) => `$${Number(value ?? 0).toFixed(2)}`;
+const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+
+export const formatMoney = (value) => money.format(Number(value ?? 0));
 
 export const formatDate = (value) => (value ? new Date(value).toLocaleString() : '');

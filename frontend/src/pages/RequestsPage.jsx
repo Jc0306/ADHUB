@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardShell from '../components/DashboardShell.jsx';
 import RequestStatusBadge from '../components/RequestStatusBadge.jsx';
@@ -6,6 +6,7 @@ import { apiGet, apiPost } from '../api/client.js';
 import { showToast } from '../toast.js';
 import { formatDate } from '../constants.js';
 import EmptyState from '../components/EmptyState.jsx';
+import { usePoll } from '../hooks/usePoll.js';
 
 /** Client area — send service requests to the agency and follow the replies. */
 export default function RequestsPage() {
@@ -16,12 +17,20 @@ export default function RequestsPage() {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    apiGet('/requests/list.php')
-      .then((d) => setRequests(d.requests))
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
+  const load = useCallback(async () => {
+    try {
+      const d = await apiGet('/requests/list.php');
+      setRequests(d.requests);
+      setError('');
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => { load(); }, [load]);
+  usePoll(load, 10000);
 
   async function handleSubmit(e) {
     e.preventDefault();

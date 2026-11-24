@@ -10,7 +10,7 @@ describe('constants', () => {
     });
 
     it('formats negative numbers', () => {
-      expect(formatMoney(-50.25)).toBe('$-50.25');
+      expect(formatMoney(-50.25)).toBe('-$50.25');
     });
 
     it('handles string input', () => {

@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
 export function usePoll(fn, ms, enabled = true) {
   const timerRef = useRef(null);
   const fnRef = useRef(fn);
-  fnRef.current = fn;
+  useEffect(() => { fnRef.current = fn; });
 
   useEffect(() => {
     if (!enabled) return;

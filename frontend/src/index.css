@@ -17,9 +17,18 @@
   outline-offset: 2px;
 }
 
+:focus-visible {
+  outline: 2px solid #8bb9fe;
+  outline-offset: 2px;
+}
+
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  animation: shimmer 1.5s infinite;
 }
 
 :root {
@@ -80,7 +89,7 @@ body {
 .form-control:focus {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--adhub-accent);
-  box-shadow: none;
+  box-shadow: 0 0 0 0.2rem rgba(139, 185, 254, 0.3);
 }
 
 .form-control::placeholder {
@@ -97,7 +106,7 @@ body {
 .form-select:focus {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: var(--adhub-accent);
-  box-shadow: none;
+  box-shadow: 0 0 0 0.2rem rgba(139, 185, 254, 0.3);
 }
 
 .form-select option {
@@ -127,6 +136,11 @@ body {
 
 .adhub-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.03);
+}
+
+.adhub-table .text-end,
+.report-table .text-end {
+  font-variant-numeric: tabular-nums;
 }
 
 .progress {
@@ -295,4 +309,10 @@ body {
 .chat-thread-btn.active {
   background: rgba(27, 50, 82, 0.6);
   border-color: var(--adhub-accent-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+  .kanban-card { transition: none; }
+  .kanban-card:hover { transform: none; }
 }

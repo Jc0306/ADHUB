@@ -21,7 +21,7 @@ $base = realpath(__DIR__ . '/../../uploads/deliverables');
 foreach ($stmt->fetchAll() as $row) {
     $full = realpath(__DIR__ . '/../../' . $row['file_path']);
 
-    if ($full && $base && str_starts_with($full, $base)) {
+    if ($full && $base && str_starts_with($full, $base . DIRECTORY_SEPARATOR)) {
         unlink($full);
     }
 }

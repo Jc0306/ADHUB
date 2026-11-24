@@ -23,15 +23,3 @@ vi.mock('../api/client.js', () => ({
 vi.mock('../toast.js', () => ({
   showToast: vi.fn(),
 }));
-
-// Mock constants
-vi.mock('../constants.js', () => ({
-  formatDate: (d) => new Date(d).toLocaleDateString(),
-  formatMoney: (n) => `$${Number(n).toFixed(2)}`,
-  REQUEST_STATUSES: ['open', 'accepted', 'done'],
-  REQUEST_STATUS_LABELS: { open: 'Open', accepted: 'Accepted', done: 'Done' },
-  PROJECT_STATUSES: ['pending', 'in-progress', 'revision', 'completed', 'rejected'],
-  STATUS_LABELS: { pending: 'Pending', 'in-progress': 'In Progress', revision: 'Revision', completed: 'Completed', rejected: 'Rejected' },
-  SERVICE_TYPES: ['Graphic Design', 'Logo Design', 'Slogan', 'Poster'],
-  APPROVAL_LABELS: { pending: 'Awaiting Review', approved: 'Approved', revision: 'Needs Revision' },
-}));

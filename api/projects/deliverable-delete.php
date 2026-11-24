@@ -19,7 +19,7 @@ if (!$deliverable) {
 $full = realpath(__DIR__ . '/../../' . $deliverable['file_path']);
 $base = realpath(__DIR__ . '/../../uploads/deliverables');
 
-if ($full && $base && str_starts_with($full, $base)) {
+if ($full && $base && str_starts_with($full, $base . DIRECTORY_SEPARATOR)) {
     unlink($full);
 }
 

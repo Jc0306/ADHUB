@@ -6,7 +6,7 @@ import { formatDate } from '../constants.js';
 const POLL_MS = 5000;
 
 /**
- * Project chat conversation view with ~3s polling — every thread belongs to
+ * Project chat conversation view with ~5s polling — every thread belongs to
  * a project. Parents pass a `key` per project so switching threads remounts
  * fresh state.
  */
